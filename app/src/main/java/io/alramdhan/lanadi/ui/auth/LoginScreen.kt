@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -45,8 +44,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import io.alramdhan.lanadi.R
 import io.alramdhan.lanadi.core.constants.AppString
+import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.ui.widgets.ModernLanButton
-import io.alramdhan.lanadi.ui.widgets.ModernTextField
+import io.alramdhan.lanadi.ui.widgets.LanadiTextField
 
 @Composable
 fun LoginScreen(
@@ -73,16 +73,16 @@ fun LoginScreen(
                 .padding(paddingValues)
         ) {
             when(windowWidthSizeClass) {
-                WindowWidthSizeClass.Compact -> MobileLayout(showContent)
-                WindowWidthSizeClass.Medium -> TabletLayout(showContent)
-                WindowWidthSizeClass.Expanded -> TabletLayout(showContent)
+                WindowWidthSizeClass.Compact -> MobileLayout(showContent, navController)
+                WindowWidthSizeClass.Medium -> TabletLayout(showContent, navController)
+                WindowWidthSizeClass.Expanded -> TabletLayout(showContent, navController)
             }
         }
     }
 }
 
 @Composable
-fun MobileLayout(showContent: Boolean = false) {
+fun MobileLayout(showContent: Boolean = false, navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -110,14 +110,14 @@ fun MobileLayout(showContent: Boolean = false) {
             )
         ) {
             Box {
-                LoginForm()
+                LoginForm(navController = navController)
             }
         }
     }
 }
 
 @Composable
-fun TabletLayout(showContent: Boolean = false) {
+fun TabletLayout(showContent: Boolean = false, navController: NavController) {
     val activity = LocalActivity.current
     LaunchedEffect(Unit) {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
@@ -125,11 +125,12 @@ fun TabletLayout(showContent: Boolean = false) {
 
     Row(
         modifier = Modifier
-            .fillMaxHeight()
+            .fillMaxWidth()
             .widthIn(max = 900.dp)
             .padding(horizontal = 48.dp, vertical = 24.dp)
             .clip(RoundedCornerShape(24.dp)),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
         AnimatedVisibility(
             visible = showContent,
@@ -147,7 +148,7 @@ fun TabletLayout(showContent: Boolean = false) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                LoginForm(isTablet = true)
+                LoginForm(isTablet = true, navController = navController)
             }
         }
         Spacer(Modifier.height(10.dp))
@@ -184,7 +185,7 @@ fun LogoSection(isInverse: Boolean = false) {
                 .size(if (isInverse) 140.dp else 100.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(
-                    if (isInverse) Color.White.copy(alpha = .2f) else MaterialTheme.colorScheme.primary
+                    MaterialTheme.colorScheme.primary
                 ),
             contentAlignment = Alignment.Center
         ) {
@@ -201,16 +202,16 @@ fun LogoSection(isInverse: Boolean = false) {
             fontSize = if(isInverse) 38.sp else 28.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 2.sp,
-            color = if(isInverse) Color.White else MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary
         )
-        Text("The Heartbeat of Your transaction",
+        Text("The Heartbeat of Your Transaction",
             fontStyle = FontStyle.Italic
         )
     }
 }
 
 @Composable
-fun LoginForm(isTablet: Boolean = false) {
+fun LoginForm(isTablet: Boolean = false, navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -225,20 +226,22 @@ fun LoginForm(isTablet: Boolean = false) {
         )
         Text("Silahkan masuk ke akun Anda")
         Spacer(Modifier.height(16.dp))
-        ModernTextField(
+        LanadiTextField(
             value = email,
             onValueChange = { email = it },
             label = "Email"
         )
         Spacer(Modifier.height(10.dp))
-        ModernTextField(
+        LanadiTextField(
             value = password,
             onValueChange = { password = it },
             label = "Password"
         )
         Spacer(Modifier.height(20.dp))
         ModernLanButton(
-            onClick = {},
+            onClick = {
+                navController.navigate(route = Screen.Main.route)
+            },
             text = "Masuk"
         )
     }

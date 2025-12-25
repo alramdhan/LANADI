@@ -7,20 +7,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ModernTextField(
+fun LanadiTextField(
+    modifier: Modifier = Modifier,
     value: String,
     label: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth(),
     singleLine: Boolean = true,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null
@@ -31,7 +29,7 @@ fun ModernTextField(
         onValueChange = onValueChange,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         singleLine = singleLine,
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
