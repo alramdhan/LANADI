@@ -17,4 +17,8 @@ val dummyProducts = listOf(
     Product(4, "Produk D", "Rp 30.000", R.drawable.main_logo),
     Product(5, "Produk E", "Rp 200.000", R.drawable.main_logo),
     Product(6, "Produk F", "Rp 45.000", R.drawable.main_logo),
+    Product(7, "Produk G", "Rp 45.000", R.drawable.main_logo),
+    Product(8, "Produk H", "Rp 45.000", R.drawable.main_logo),
+    Product(9, "Produk I", "Rp 45.000", R.drawable.main_logo),
+    Product(10, "Produk J", "Rp 45.000", R.drawable.main_logo),
 )

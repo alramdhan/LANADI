@@ -51,6 +51,24 @@ dependencies {
     implementation(libs.material.icons.extended)
     implementation(libs.window.size.android)
     implementation(libs.androidx.navigation.compose)
+    //Camera and scanner QR
+    implementation(libs.barcode.scanning)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
+    // viewmodel lifecycle
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // Koin (DI)
+    implementation(libs.koin.androidx.compose)
+
+    // Retrofit & OkHttp
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import io.alramdhan.lanadi.ui.home.HistoryScreen
 import io.alramdhan.lanadi.ui.home.HomeScreen
 import io.alramdhan.lanadi.ui.home.OrderScreen
-import io.alramdhan.lanadi.ui.home.SettingScreen
+import io.alramdhan.lanadi.ui.home.setting.SettingScreen
 
 @Composable
 fun NavigationGraph(

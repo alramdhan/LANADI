@@ -3,6 +3,9 @@ package io.alramdhan.lanadi.ui.auth
 import android.content.pm.ActivityInfo
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInHorizontally
@@ -47,11 +50,15 @@ import io.alramdhan.lanadi.core.constants.AppString
 import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.ui.widgets.ModernLanButton
 import io.alramdhan.lanadi.ui.widgets.LanadiTextField
+import io.alramdhan.lanadi.viewmodels.auth.LoginViewModel
+import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun LoginScreen(
+fun SharedTransitionScope.LoginScreen(
     windowWidthSizeClass: WindowWidthSizeClass?,
-    navController: NavController
+    navController: NavController,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     var showContent by remember { mutableStateOf(false) }
     val meshGradient = Brush.linearGradient(
@@ -73,16 +80,17 @@ fun LoginScreen(
                 .padding(paddingValues)
         ) {
             when(windowWidthSizeClass) {
-                WindowWidthSizeClass.Compact -> MobileLayout(showContent, navController)
-                WindowWidthSizeClass.Medium -> TabletLayout(showContent, navController)
-                WindowWidthSizeClass.Expanded -> TabletLayout(showContent, navController)
+                WindowWidthSizeClass.Compact -> MobileLayout(showContent, navController, animatedVisibilityScope)
+                WindowWidthSizeClass.Medium -> TabletLayout(showContent, navController, animatedVisibilityScope)
+                WindowWidthSizeClass.Expanded -> TabletLayout(showContent, navController, animatedVisibilityScope)
             }
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun MobileLayout(showContent: Boolean = false, navController: NavController) {
+fun SharedTransitionScope.MobileLayout(showContent: Boolean = false, navController: NavController, animatedVisibilityScope: AnimatedVisibilityScope) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -110,14 +118,18 @@ fun MobileLayout(showContent: Boolean = false, navController: NavController) {
             )
         ) {
             Box {
-                LoginForm(navController = navController)
+                LoginForm(
+                    navController = navController,
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
             }
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun TabletLayout(showContent: Boolean = false, navController: NavController) {
+fun SharedTransitionScope.TabletLayout(showContent: Boolean = false, navController: NavController, animatedVisibilityScope: AnimatedVisibilityScope) {
     val activity = LocalActivity.current
     LaunchedEffect(Unit) {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
@@ -148,7 +160,11 @@ fun TabletLayout(showContent: Boolean = false, navController: NavController) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                LoginForm(isTablet = true, navController = navController)
+                LoginForm(
+                    isTablet = true,
+                    navController = navController,
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
             }
         }
         Spacer(Modifier.height(10.dp))
@@ -210,8 +226,15 @@ fun LogoSection(isInverse: Boolean = false) {
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun LoginForm(isTablet: Boolean = false, navController: NavController) {
+fun SharedTransitionScope.LoginForm(
+    isTablet: Boolean = false,
+    navController: NavController,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: LoginViewModel = koinViewModel()
+) {
+    val state = viewModel.state
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -239,9 +262,19 @@ fun LoginForm(isTablet: Boolean = false, navController: NavController) {
         )
         Spacer(Modifier.height(20.dp))
         ModernLanButton(
+            modifier = Modifier.sharedElement(
+                rememberSharedContentState(key = "btn_login_to_fab"),
+                animatedVisibilityScope = animatedVisibilityScope
+            ),
             onClick = {
-                navController.navigate(route = Screen.Main.route)
+//                navController.navigate(route = Screen.Main.route) {
+//                    popUpTo(Screen.Login.route) {
+//                        inclusive = true
+//                    }
+//                }
+                viewModel.onIntent(LoginIntent.LoginCLicked(email, password))
             },
+            isLoading = !state.isLoading,
             text = "Masuk"
         )
     }
