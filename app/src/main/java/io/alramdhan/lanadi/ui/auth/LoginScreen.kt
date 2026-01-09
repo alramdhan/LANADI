@@ -1,6 +1,7 @@
 package io.alramdhan.lanadi.ui.auth
 
 import android.content.pm.ActivityInfo
+import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -119,8 +120,14 @@ fun SharedTransitionScope.MobileLayout(showContent: Boolean = false, navControll
         ) {
             Box {
                 LoginForm(
-                    navController = navController,
-                    animatedVisibilityScope = animatedVisibilityScope
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    onNavigateHome = {
+                        navController.navigate(Screen.Main.route) {
+                            popUpTo(Screen.Login.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
                 )
             }
         }
@@ -162,8 +169,14 @@ fun SharedTransitionScope.TabletLayout(showContent: Boolean = false, navControll
             ) {
                 LoginForm(
                     isTablet = true,
-                    navController = navController,
-                    animatedVisibilityScope = animatedVisibilityScope
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    onNavigateHome = {
+                        navController.navigate(Screen.Main.route) {
+                            popUpTo(Screen.Login.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
                 )
             }
         }
@@ -230,13 +243,24 @@ fun LogoSection(isInverse: Boolean = false) {
 @Composable
 fun SharedTransitionScope.LoginForm(
     isTablet: Boolean = false,
-    navController: NavController,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: LoginViewModel = koinViewModel()
+    viewModel: LoginViewModel = koinViewModel(),
+    onNavigateHome: () -> Unit
 ) {
     val state = viewModel.state
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when(effect) {
+                is LoginEffect.NavigateToHome -> onNavigateHome()
+                is LoginEffect.ShowSnacbar -> {
+                    Log.d("LoginScreen", viewModel.state.error ?: "Terjadi kesalahan")
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -267,15 +291,11 @@ fun SharedTransitionScope.LoginForm(
                 animatedVisibilityScope = animatedVisibilityScope
             ),
             onClick = {
-//                navController.navigate(route = Screen.Main.route) {
-//                    popUpTo(Screen.Login.route) {
-//                        inclusive = true
-//                    }
-//                }
                 viewModel.onIntent(LoginIntent.LoginCLicked(email, password))
             },
-            isLoading = !state.isLoading,
+            isLoading = state.isLoading,
             text = "Masuk"
         )
     }
 }
+

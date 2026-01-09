@@ -2,6 +2,7 @@ package io.alramdhan.lanadi.ui.widgets
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,13 +28,18 @@ fun ModernLanButton(
         modifier = modifier.fillMaxWidth()
             .height(55.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        ),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
-        enabled = isLoading
+        enabled = !isLoading
     ) {
         when(isLoading) {
-            true -> CircularProgressIndicator()
-            else -> Text(text,
+            true -> CircularProgressIndicator(
+                Modifier.size(35.dp)
+            )
+            false -> Text(text,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
