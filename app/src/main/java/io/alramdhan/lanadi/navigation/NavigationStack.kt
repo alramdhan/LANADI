@@ -80,14 +80,28 @@ fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?) {
                 LoginScreen(
                     windowWidthSizeClass = windowWidthSizeClass,
                     navController = navController,
-                    animatedVisibilityScope = this@composable
+                    animatedVisibilityScope = this@composable,
+                    onNavigateHome = {
+                        navController.navigate(Screen.Main.route) {
+                            popUpTo(Screen.Login.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
                 )
             }
             composable(Screen.Login.route) {
                 LoginScreen(
                     windowWidthSizeClass = windowWidthSizeClass,
                     navController = navController,
-                    animatedVisibilityScope = this@composable
+                    animatedVisibilityScope = this@composable,
+                    onNavigateHome = {
+                        navController.navigate(Screen.Main.route) {
+                            popUpTo(Screen.Login.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
                 )
             }
             composable(route = Screen.Main.route) {
