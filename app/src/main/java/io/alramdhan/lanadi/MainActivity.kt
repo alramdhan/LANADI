@@ -8,12 +8,15 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import io.alramdhan.lanadi.core.di.appModule
 import io.alramdhan.lanadi.core.di.networkModule
+import io.alramdhan.lanadi.data.local.TokenManager
 import io.alramdhan.lanadi.navigation.NavigationStack
 import io.alramdhan.lanadi.ui.theme.LANADITheme
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
+    private val tokenManager: TokenManager by inject()
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +29,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val windowSizedClass = calculateWindowSizeClass(this)
             LANADITheme(dynamicColor = false) {
-                NavigationStack(windowWidthSizeClass = windowSizedClass.widthSizeClass)
+                NavigationStack(windowWidthSizeClass = windowSizedClass.widthSizeClass, tokenManager.getToken())
             }
         }
     }

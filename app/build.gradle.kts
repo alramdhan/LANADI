@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.serializations)
 }
 
 android {
@@ -51,6 +52,7 @@ dependencies {
     implementation(libs.material.icons.extended)
     implementation(libs.window.size.android)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.security.crypto)
     //Camera and scanner QR
     implementation(libs.barcode.scanning)
     implementation(libs.androidx.camera.core)
@@ -68,6 +70,9 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

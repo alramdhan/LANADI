@@ -5,7 +5,13 @@ import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.NoteAlt
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+
+data class ScreenTabItem(
+    val route: String,
+    val content: @Composable () -> Unit
+)
 
 sealed class BottomNavScreen(
     val title: String,

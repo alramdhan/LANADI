@@ -1,10 +1,10 @@
 package io.alramdhan.lanadi.ui.auth
 
-import io.alramdhan.lanadi.domain.models.Kasir
+import io.alramdhan.lanadi.domain.models.CurrentUser
 
 data class LoginState(
     val isLoading: Boolean = false,
-    val kasir: Kasir? = null,
+    val kasir: CurrentUser? = null,
     val error: String? = null,
 
     val login: String = "",

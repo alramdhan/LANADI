@@ -56,7 +56,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun HomeScreen(
     widthSizeClass: WindowWidthSizeClass?,
-    navController: NavController
+    navController: NavController,
 ) {
     when(widthSizeClass) {
         WindowWidthSizeClass.Compact -> MobileHomeLayout(navController)

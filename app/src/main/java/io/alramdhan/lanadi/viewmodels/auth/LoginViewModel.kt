@@ -1,8 +1,5 @@
 package io.alramdhan.lanadi.viewmodels.auth
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.alramdhan.lanadi.domain.usecase.LoginUseCase
@@ -27,7 +24,7 @@ class LoginViewModel(private val loginUseCase: LoginUseCase) : ViewModel() {
         when (intent) {
             is LoginIntent.LoginCLicked -> {
                 when(formValidation()) {
-                    false -> executeLogin()
+                    false -> executeLogin(intent.login, intent.password)
                     else -> {}
                 }
             }
@@ -39,46 +36,50 @@ class LoginViewModel(private val loginUseCase: LoginUseCase) : ViewModel() {
     }
 
     private fun formValidation(): Boolean {
+        var valid = false
+
         if(_uiState.value.login.isEmpty()) {
             _uiState.update {
                 it.copy(loginError = true, loginMsgError = "Email atau Username harus diisi")
             }
-            return true
+            valid = true
         }
         if(_uiState.value.password.isEmpty()) {
             _uiState.update {
                 it.copy(passwordError = true, passwordMsgError = "Password harus diisi")
             }
-            return true
+            valid =  true
         } else if(_uiState.value.password.length < 8) {
             _uiState.update {
                 it.copy(passwordError = true, passwordMsgError = "Password minimal 8 karakter")
             }
-            return true
+            valid = true
         }
 
-        _uiState.update {
-            it.copy(
-                loginError = false,
-                loginMsgError = "",
-                passwordError = false,
-                passwordMsgError = ""
-            )
-        }
-        return false
+        return valid
     }
 
-    private fun executeLogin() {
+    private fun executeLogin(login: String, pass: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            loginUseCase(_uiState.value.login, _uiState.value.password)
-                .onSuccess {
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    loginError = false,
+                    loginMsgError = "",
+                    passwordError = false,
+                    passwordMsgError = ""
+                )
+            }
+
+            loginUseCase(login, pass).collect { result ->
+                result.onSuccess {
                     _uiState.update { state -> state.copy(isLoading = false, kasir = it) }
                     _effect.send(LoginEffect.NavigateToHome)
                 }.onFailure {
                     _uiState.update { state -> state.copy(isLoading = false, error = it.message) }
                     _effect.send(LoginEffect.ShowSnackbar(it.message!!))
                 }
+            }
         }
     }
 }

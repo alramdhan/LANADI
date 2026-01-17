@@ -1,7 +1,6 @@
 package io.alramdhan.lanadi.ui.auth
 
 import android.content.pm.ActivityInfo
-import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -69,7 +68,6 @@ fun SharedTransitionScope.LoginScreen(
     windowWidthSizeClass: WindowWidthSizeClass?,
     navController: NavController,
     viewModel: LoginViewModel = koinViewModel(),
-    onNavigateHome: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     var showContent by remember { mutableStateOf(false) }
@@ -80,13 +78,20 @@ fun SharedTransitionScope.LoginScreen(
         ),
     )
 
+    val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = true) {
         showContent = true
         viewModel.effect.collect { effect ->
             when(effect) {
-                is LoginEffect.NavigateToHome -> onNavigateHome()
+                is LoginEffect.NavigateToHome -> {
+                    navController.navigate(Screen.Main.route) {
+                        popUpTo(Screen.Login.route) {
+                            inclusive = true
+                        }
+                    }
+                }
                 is LoginEffect.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(effect.message)
                 }
@@ -104,9 +109,9 @@ fun SharedTransitionScope.LoginScreen(
                 .padding(paddingValues)
         ) {
             when(windowWidthSizeClass) {
-                WindowWidthSizeClass.Compact -> MobileLayout(showContent, animatedVisibilityScope, viewModel = viewModel)
-                WindowWidthSizeClass.Medium -> TabletLayout(showContent, navController, animatedVisibilityScope, viewModel)
-                WindowWidthSizeClass.Expanded -> TabletLayout(showContent, navController, animatedVisibilityScope, viewModel)
+                WindowWidthSizeClass.Compact -> MobileLayout(showContent, animatedVisibilityScope, state, viewModel)
+                WindowWidthSizeClass.Medium -> TabletLayout(showContent, animatedVisibilityScope, state, viewModel)
+                WindowWidthSizeClass.Expanded -> TabletLayout(showContent, animatedVisibilityScope, state, viewModel)
             }
         }
     }
@@ -117,6 +122,7 @@ fun SharedTransitionScope.LoginScreen(
 fun SharedTransitionScope.MobileLayout(
     showContent: Boolean = false,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    state: LoginState,
     viewModel: LoginViewModel
 ) {
     Column(
@@ -148,7 +154,8 @@ fun SharedTransitionScope.MobileLayout(
             Box {
                 LoginForm(
                     animatedVisibilityScope = animatedVisibilityScope,
-                    viewModel = viewModel,
+                    state = state,
+                    viewModel = viewModel
                 )
             }
         }
@@ -159,8 +166,8 @@ fun SharedTransitionScope.MobileLayout(
 @Composable
 fun SharedTransitionScope.TabletLayout(
     showContent: Boolean = false,
-    navController: NavController,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    state: LoginState,
     viewModel: LoginViewModel
 ) {
     val activity = LocalActivity.current
@@ -196,6 +203,7 @@ fun SharedTransitionScope.TabletLayout(
                 LoginForm(
                     isTablet = true,
                     animatedVisibilityScope = animatedVisibilityScope,
+                    state = state,
                     viewModel = viewModel
                 )
             }
@@ -264,10 +272,9 @@ fun LogoSection(isInverse: Boolean = false) {
 fun SharedTransitionScope.LoginForm(
     isTablet: Boolean = false,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    state: LoginState,
     viewModel: LoginViewModel
 ) {
-    val state by viewModel.uiState.collectAsState()
-
     Column(
         modifier = Modifier
             .fillMaxWidth()

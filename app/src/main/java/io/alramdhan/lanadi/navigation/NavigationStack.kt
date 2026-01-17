@@ -5,10 +5,8 @@ import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -32,7 +30,7 @@ import io.alramdhan.lanadi.ui.home.feature.CameraQRScanner
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?) {
+fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?, token: String?) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var hasCameraPermission by remember {
@@ -77,31 +75,21 @@ fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?) {
         val navController = rememberNavController()
         val graph = navController.createGraph(startDestination = Screen.Initial.route) {
             composable(Screen.Initial.route) {
-                LoginScreen(
-                    windowWidthSizeClass = windowWidthSizeClass,
-                    navController = navController,
-                    animatedVisibilityScope = this@composable,
-                    onNavigateHome = {
-                        navController.navigate(Screen.Main.route) {
-                            popUpTo(Screen.Login.route) {
-                                inclusive = true
-                            }
-                        }
-                    }
-                )
+                if(token.isNullOrEmpty()) {
+                    LoginScreen(
+                        windowWidthSizeClass = windowWidthSizeClass,
+                        navController = navController,
+                        animatedVisibilityScope = this@composable,
+                    )
+                } else {
+                    MenuTab(windowWidthSizeClass, navController, this@composable)
+                }
             }
             composable(Screen.Login.route) {
                 LoginScreen(
                     windowWidthSizeClass = windowWidthSizeClass,
                     navController = navController,
                     animatedVisibilityScope = this@composable,
-                    onNavigateHome = {
-                        navController.navigate(Screen.Main.route) {
-                            popUpTo(Screen.Login.route) {
-                                inclusive = true
-                            }
-                        }
-                    }
                 )
             }
             composable(route = Screen.Main.route) {

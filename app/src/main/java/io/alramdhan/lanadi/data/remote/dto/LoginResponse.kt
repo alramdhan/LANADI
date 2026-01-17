@@ -1,12 +1,10 @@
 package io.alramdhan.lanadi.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
+import io.alramdhan.lanadi.domain.models.Kasir
 
 data class LoginResponse(
-    val id: String,
-    val name: String,
-    val email: String,
-    val image: String? = null,
+    val user: Kasir,
     @SerializedName("access_token")
-    val accessToken: String?,
+    val accessToken: String?
 )

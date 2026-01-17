@@ -15,27 +15,22 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import io.alramdhan.lanadi.navigation.Screen
+import io.alramdhan.lanadi.viewmodels.home.setting.SettingViewModel
 
 @Composable
 fun SettingScreen(
     widthSizeClass: WindowWidthSizeClass?,
-    navController: NavController
+    viewModel: SettingViewModel
 ) {
     LazyColumn (Modifier.fillMaxSize()) {
-        item {
+        item(1) {
             ListItem(
                 modifier = Modifier.fillMaxWidth()
                     .clickable(
                         interactionSource = remember(Unit) { MutableInteractionSource() },
                         indication = LocalIndication.current,
                         onClick = {
-                            navController.navigate(Screen.Login.route) {
-                                popUpTo(Screen.Main.route) {
-                                    inclusive = true
-                                }
-                            }
+                            viewModel.onIntent(SettingIntent.LogoutClicked)
                         }
                     ),
                 headlineContent = { Text("Keluar") },
