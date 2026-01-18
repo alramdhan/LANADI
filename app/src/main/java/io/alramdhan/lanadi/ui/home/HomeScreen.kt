@@ -53,7 +53,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -164,19 +163,6 @@ private fun ListRowKategori(state: HomeState, viewModel: HomeViewModel) {
                     onKategoriSelected = { viewModel.onIntent(HomeIntent.OnSelectKategori(kategori.id) )})
             }
         }
-//        items(if (state.isKategoriLoading) 5 else state.kategoris.size) {
-//            val kate = when(state.kategoris.isEmpty()) {
-//                true -> null
-//                else -> state.kategoris[it]
-//            }
-//            val selected = when(state.selectedKategori == null) {
-//                true -> false
-//                else -> {
-//                    state.selectedKategori.id == kate!!.id
-//                }
-//            }
-//            KategoriItem(state.isKategoriLoading, kate, selected)
-//        }
     }
 }
 

@@ -22,13 +22,9 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +49,6 @@ import io.alramdhan.lanadi.navigation.BottomNavScreen
 import io.alramdhan.lanadi.navigation.NavigationGraph
 import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.navigation.ScreenTabItem
-import io.alramdhan.lanadi.ui.home.setting.SettingEffect
 import io.alramdhan.lanadi.ui.home.setting.SettingScreen
 import io.alramdhan.lanadi.ui.theme.BNCurvedShape
 import io.alramdhan.lanadi.viewmodels.home.HomeViewModel
