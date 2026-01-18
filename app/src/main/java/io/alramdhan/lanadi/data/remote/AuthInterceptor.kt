@@ -12,13 +12,11 @@ class AuthInterceptor(private val tokenManager: TokenManager): Interceptor {
         requestBuilder.addHeader("Accept", "application/json")
 
         val token = tokenManager.getToken()
-
         if(!token.isNullOrEmpty()) {
             requestBuilder.addHeader("Authorization", "Bearer $token")
         }
 
         val response = chain.proceed(requestBuilder.build())
-
         if(response.code == 404) {
             synchronized(this) {
                 tokenManager.clearToken()

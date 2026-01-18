@@ -1,5 +1,6 @@
 package io.alramdhan.lanadi.ui.home
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,10 +31,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,31 +48,55 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import io.alramdhan.lanadi.data.Product
 import io.alramdhan.lanadi.data.dummyProducts
+import io.alramdhan.lanadi.domain.models.Kategori
 import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.ui.theme.Typography
 import io.alramdhan.lanadi.ui.widgets.LanadiTextField
+import io.alramdhan.lanadi.ui.widgets.SkeletonPlaceholder
+import io.alramdhan.lanadi.viewmodels.home.HomeViewModel
 import kotlinx.coroutines.delay
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     widthSizeClass: WindowWidthSizeClass?,
     navController: NavController,
+    viewModel: HomeViewModel
 ) {
-    when(widthSizeClass) {
-        WindowWidthSizeClass.Compact -> MobileHomeLayout(navController)
-        WindowWidthSizeClass.Medium -> TabletHomeLayout(navController)
-        WindowWidthSizeClass.Expanded -> TabletHomeLayout(navController)
+    val state by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = true) {
+        snackbarHostState.showSnackbar("Selamat datang")
+        viewModel.effect.collect { effect ->
+            when(effect) {
+                is HomeEffect.ShowSnackBar -> snackbarHostState.showSnackbar(effect.message)
+            }
+        }
+    }
+
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { _ ->
+        when(widthSizeClass) {
+            WindowWidthSizeClass.Compact -> MobileHomeLayout(navController, viewModel, state)
+            WindowWidthSizeClass.Medium -> TabletHomeLayout(navController)
+            WindowWidthSizeClass.Expanded -> TabletHomeLayout(navController)
+        }
     }
 }
 
 @Composable
-private fun MobileHomeLayout(navController: NavController) {
+private fun MobileHomeLayout(navController: NavController, viewModel: HomeViewModel, state: HomeState) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Row(
             modifier = Modifier
@@ -86,7 +116,7 @@ private fun MobileHomeLayout(navController: NavController) {
         }
         SearchTextField()
         Spacer(Modifier.height(16.dp))
-        ListRowKategori()
+        ListRowKategori(state, viewModel)
         Spacer(Modifier.height(16.dp))
         ListGridProduk()
     }
@@ -117,25 +147,47 @@ private fun SearchTextField() {
 }
 
 @Composable
-private fun ListRowKategori() {
-    LazyRow(Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        items(5) { index ->
-            KategoriItem(index)
+private fun ListRowKategori(state: HomeState, viewModel: HomeViewModel) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        when(state.isKategoriLoading) {
+            true -> items(5) {
+                KategoriShimmerItem()
+            }
+            else -> items(state.kategoris.size) {
+                val kategori = state.kategoris[it]
+                KategoriItem(
+                    kategori = kategori,
+                    selected = state.selectedKategori == kategori.id,
+                    onKategoriSelected = { viewModel.onIntent(HomeIntent.OnSelectKategori(kategori.id) )})
+            }
         }
+//        items(if (state.isKategoriLoading) 5 else state.kategoris.size) {
+//            val kate = when(state.kategoris.isEmpty()) {
+//                true -> null
+//                else -> state.kategoris[it]
+//            }
+//            val selected = when(state.selectedKategori == null) {
+//                true -> false
+//                else -> {
+//                    state.selectedKategori.id == kate!!.id
+//                }
+//            }
+//            KategoriItem(state.isKategoriLoading, kate, selected)
+//        }
     }
 }
 
 @Composable
-private fun KategoriItem(index: Int) {
-    val selectedIndex = 0
-
+private fun KategoriShimmerItem() {
     Card(
         modifier = Modifier.size(100.dp),
         colors = CardColors(
-            containerColor = if(selectedIndex == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.surface,
             disabledContainerColor = Color.Gray,
-            contentColor = if(selectedIndex == index) Color.White else Color.Black,
+            contentColor = Color.Black,
             disabledContentColor = Color.Black
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -153,14 +205,61 @@ private fun KategoriItem(index: Int) {
                     .background(MaterialTheme.colorScheme.secondaryContainer),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Gambar")
+                SkeletonPlaceholder(modifier = Modifier.fillMaxWidth().height(60.dp))
             }
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
+                    .padding(horizontal = 6.dp)
+                    .padding(top = 4.dp),
+            ) {
+                SkeletonPlaceholder(modifier = Modifier.width(50.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun KategoriItem(kategori: Kategori? = null, selected: Boolean, onKategoriSelected: () -> Unit) {
+    Card(
+        modifier = Modifier.size(100.dp),
+        colors = CardColors(
+            containerColor = if(selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+            disabledContainerColor = Color.Gray,
+            contentColor = if(selected) Color.White else Color.Black,
+            disabledContentColor = Color.Black
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        onClick = onKategoriSelected
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Placeholder Gambar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp)
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
                 contentAlignment = Alignment.Center
             ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(kategori!!.image)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "image kategori ${kategori.id}",
+                    contentScale = ContentScale.Crop
+                )
+            }
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .padding(horizontal = 6.dp)
+                    .padding(top = 4.dp),
+            ) {
                 Text(
-                    text = "Kategori $index",
+                    text = kategori!!.name,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )

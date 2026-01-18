@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +56,7 @@ import io.alramdhan.lanadi.navigation.ScreenTabItem
 import io.alramdhan.lanadi.ui.home.setting.SettingEffect
 import io.alramdhan.lanadi.ui.home.setting.SettingScreen
 import io.alramdhan.lanadi.ui.theme.BNCurvedShape
+import io.alramdhan.lanadi.viewmodels.home.HomeViewModel
 import io.alramdhan.lanadi.viewmodels.home.setting.SettingViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -64,13 +66,16 @@ fun SharedTransitionScope.MenuTab(
     widthSizeClass: WindowWidthSizeClass? = null,
     navController: NavController,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    homeVModel: HomeViewModel = koinViewModel(),
     settingVModel: SettingViewModel = koinViewModel()
 ) {
+
     val listTabScreen = listOf(
         ScreenTabItem(BottomNavScreen.Home.route, {
             HomeScreen(
                 widthSizeClass = widthSizeClass,
                 navController = navController,
+                viewModel = homeVModel
             )}
         ),
         ScreenTabItem(BottomNavScreen.Order.route, {
@@ -88,31 +93,14 @@ fun SharedTransitionScope.MenuTab(
         ScreenTabItem(BottomNavScreen.Setting.route, {
             SettingScreen(
                 widthSizeClass = widthSizeClass,
+                navController = navController,
                 viewModel = settingVModel
             )
         })
     )
     val bottomNavController = rememberNavController()
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(key1 = true) {
-        snackbarHostState.showSnackbar("Selamat datang")
-        settingVModel.effect.collect { effect ->
-            when(effect) {
-                is SettingEffect.NavigateToLogin -> {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Main.route) {
-                            inclusive = true
-                        }
-                    }
-                }
-                is SettingEffect.ShowSnackBar -> snackbarHostState.showSnackbar(effect.message)
-            }
-        }
-    }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
 //            BottomBar(bottomNavController)
             BottomCurvedBar(bottomNavController, navController, animatedVisibilityScope)

@@ -1,6 +1,5 @@
 package io.alramdhan.lanadi.data.repository
 
-import io.alramdhan.lanadi.core.constants.Prefs
 import io.alramdhan.lanadi.data.local.TokenManager
 import io.alramdhan.lanadi.data.mapper.toDomain
 import io.alramdhan.lanadi.data.remote.dto.LoginRequest

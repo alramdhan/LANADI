@@ -21,15 +21,17 @@ class SettingViewModel(private val logOutUseCase: LogoutUseCase): ViewModel() {
 
     fun onIntent(intent: SettingIntent) {
         when(intent) {
-            is SettingIntent.LogoutClicked -> {
-                viewModelScope.launch {
-                    logOutUseCase().collect { result ->
-                        result.onSuccess {
-                            _effect.send(SettingEffect.NavigateToLogin)
-                        }.onFailure { response ->
-                            _effect.send(SettingEffect.ShowSnackBar(response.localizedMessage!!))
-                        }
-                    }
+            is SettingIntent.LogoutClicked -> executeLogout()
+        }
+    }
+
+    private fun executeLogout() {
+        viewModelScope.launch {
+            logOutUseCase().collect { result ->
+                result.onSuccess {
+                    _effect.send(SettingEffect.NavigateToLogin)
+                }.onFailure { response ->
+                    _effect.send(SettingEffect.ShowSnackBar(response.localizedMessage!!))
                 }
             }
         }

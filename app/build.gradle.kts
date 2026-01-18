@@ -65,6 +65,8 @@ dependencies {
 
     // Koin (DI)
     implementation(libs.koin.androidx.compose)
+    // Coil compose
+    implementation(libs.coil.compose)
 
     // Retrofit & OkHttp
     implementation(libs.retrofit)

@@ -13,12 +13,12 @@ import java.util.concurrent.TimeUnit
 
 val networkModule = module {
     single { TokenManager(get()) }
-    single { AuthInterceptor(get()) }
     single {
         HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.HEADERS
+            level = HttpLoggingInterceptor.Level.BODY
         }
     }
+    single { AuthInterceptor(get()) }
 
     single {
         OkHttpClient.Builder()
