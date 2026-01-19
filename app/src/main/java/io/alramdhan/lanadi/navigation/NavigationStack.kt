@@ -30,7 +30,7 @@ import io.alramdhan.lanadi.ui.home.feature.CameraQRScanner
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?, token: String?) {
+fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?, token: String?, onUnauthorized: Boolean?) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var hasCameraPermission by remember {
@@ -75,7 +75,7 @@ fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?, token: String?)
         val navController = rememberNavController()
         val graph = navController.createGraph(startDestination = Screen.Initial.route) {
             composable(Screen.Initial.route) {
-                if(token.isNullOrEmpty()) {
+                if(token.isNullOrEmpty() || onUnauthorized == true) {
                     LoginScreen(
                         windowWidthSizeClass = windowWidthSizeClass,
                         navController = navController,

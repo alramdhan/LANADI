@@ -4,6 +4,7 @@ import io.alramdhan.lanadi.core.constants.URL
 import io.alramdhan.lanadi.data.local.TokenManager
 import io.alramdhan.lanadi.data.remote.ApiService
 import io.alramdhan.lanadi.data.remote.AuthInterceptor
+import io.alramdhan.lanadi.viewmodels.auth.AuthManager
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
@@ -18,7 +19,8 @@ val networkModule = module {
             level = HttpLoggingInterceptor.Level.BODY
         }
     }
-    single { AuthInterceptor(get()) }
+    single { AuthManager() }
+    single { AuthInterceptor(get(), get()) }
 
     single {
         OkHttpClient.Builder()

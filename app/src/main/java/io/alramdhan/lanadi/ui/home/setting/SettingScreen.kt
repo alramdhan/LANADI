@@ -1,6 +1,7 @@
 package io.alramdhan.lanadi.ui.home.setting
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.viewmodels.home.setting.SettingViewModel
@@ -31,12 +33,14 @@ fun SettingScreen(
     navController: NavController,
     viewModel: SettingViewModel
 ) {
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = true) {
         viewModel.effect.collect { effect ->
             when(effect) {
                 is SettingEffect.NavigateToLogin -> {
                     navController.navigate(Screen.Login.route) {
+                        Toast.makeText(context, "Anda telah keluar", Toast.LENGTH_LONG).show()
                         popUpTo(Screen.Main.route) {
                             inclusive = true
                         }

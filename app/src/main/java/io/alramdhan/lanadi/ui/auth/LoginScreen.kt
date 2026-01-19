@@ -62,6 +62,8 @@ import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.ui.widgets.ModernLanButton
 import io.alramdhan.lanadi.ui.widgets.LanadiTextField
 import io.alramdhan.lanadi.viewmodels.auth.LoginViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -89,6 +91,7 @@ fun SharedTransitionScope.LoginScreen(
             when(effect) {
                 is LoginEffect.NavigateToHome -> {
                     navController.navigate(Screen.Main.route) {
+                        Toast.makeText(context, "Login berhasil", Toast.LENGTH_LONG).show()
                         popUpTo(Screen.Login.route) {
                             inclusive = true
                         }
