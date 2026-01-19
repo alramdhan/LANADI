@@ -1,6 +1,7 @@
 package io.alramdhan.lanadi.ui.auth
 
 import android.content.pm.ActivityInfo
+import android.widget.Toast
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -47,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -70,6 +72,7 @@ fun SharedTransitionScope.LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
+    val context = LocalContext.current
     var showContent by remember { mutableStateOf(false) }
     val meshGradient = Brush.linearGradient(
         colors = listOf(
@@ -79,7 +82,6 @@ fun SharedTransitionScope.LoginScreen(
     )
 
     val state by viewModel.uiState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = true) {
         showContent = true
@@ -93,15 +95,13 @@ fun SharedTransitionScope.LoginScreen(
                     }
                 }
                 is LoginEffect.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(effect.message)
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()

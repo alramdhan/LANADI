@@ -29,6 +29,7 @@ class HomeViewModel(private val getKategoriUseCase: GetKategoriUseCase): ViewMod
         when(intent) {
             is HomeIntent.LoadCategories -> fetchKategori()
             is HomeIntent.OnSelectKategori -> _uiState.update { it.copy(selectedKategori = intent.id) }
+            is HomeIntent.SearchTextChanged -> _uiState.update { it.copy(searchMenu = intent.text) }
         }
     }
 
@@ -41,7 +42,7 @@ class HomeViewModel(private val getKategoriUseCase: GetKategoriUseCase): ViewMod
                     _uiState.update { it.copy(isKategoriLoading = false, kategoris = response, selectedKategori = response[0].id) }
                 }.onFailure { response ->
                     _uiState.update { it.copy(isKategoriLoading = false, errorKategori = response.localizedMessage) }
-                    _effect.send(HomeEffect.ShowSnackBar(response.localizedMessage!!))
+                    _effect.send(HomeEffect.ShowToastMessage(response.localizedMessage!!))
                 }
             }
         }

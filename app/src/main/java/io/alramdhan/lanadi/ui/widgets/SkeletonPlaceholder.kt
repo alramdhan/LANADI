@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 
 private fun Modifier.shimmerEffect(): Modifier = composed {
@@ -46,10 +47,10 @@ private fun Modifier.shimmerEffect(): Modifier = composed {
 }
 
 @Composable
-fun SkeletonPlaceholder(modifier: Modifier = Modifier) {
+fun SkeletonPlaceholder(modifier: Modifier = Modifier, roundedShape: Shape = RoundedCornerShape(12.dp)) {
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
+            .clip(roundedShape)
             .height(height = 18.dp)
             .shimmerEffect(),
     )

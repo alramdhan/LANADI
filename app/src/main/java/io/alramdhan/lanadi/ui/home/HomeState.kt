@@ -6,5 +6,7 @@ data class HomeState(
     val isKategoriLoading: Boolean = false,
     val kategoris: List<Kategori> = emptyList(),
     val selectedKategori: Int = 0,
-    val errorKategori: String? = null
+    val errorKategori: String? = null,
+
+    val searchMenu: String? = null
 )
