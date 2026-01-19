@@ -33,8 +33,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -62,8 +60,6 @@ import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.ui.widgets.ModernLanButton
 import io.alramdhan.lanadi.ui.widgets.LanadiTextField
 import io.alramdhan.lanadi.viewmodels.auth.LoginViewModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalSharedTransitionApi::class)
