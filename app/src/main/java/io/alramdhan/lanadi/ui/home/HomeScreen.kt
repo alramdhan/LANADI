@@ -57,7 +57,6 @@ import coil.request.ImageRequest
 import io.alramdhan.lanadi.data.Product
 import io.alramdhan.lanadi.data.dummyProducts
 import io.alramdhan.lanadi.domain.models.Kategori
-import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.ui.theme.Typography
 import io.alramdhan.lanadi.ui.widgets.LanadiTextField
 import io.alramdhan.lanadi.ui.widgets.SkeletonPlaceholder
