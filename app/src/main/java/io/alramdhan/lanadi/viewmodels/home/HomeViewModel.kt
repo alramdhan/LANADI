@@ -2,7 +2,6 @@ package io.alramdhan.lanadi.viewmodels.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.alramdhan.lanadi.domain.models.Produk
 import io.alramdhan.lanadi.domain.usecase.GetKategoriUseCase
 import io.alramdhan.lanadi.domain.usecase.GetProdukUseCase
 import io.alramdhan.lanadi.ui.home.HomeEffect

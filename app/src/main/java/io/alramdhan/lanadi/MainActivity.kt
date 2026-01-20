@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val windowSizedClass = calculateWindowSizeClass(this)
-            var authorized: Boolean = false
+            var authorized = false
 
             LaunchedEffect(Unit) {
                 authManager.onUnauthorized.collectLatest { isUnathorized -> authorized = !isUnathorized}

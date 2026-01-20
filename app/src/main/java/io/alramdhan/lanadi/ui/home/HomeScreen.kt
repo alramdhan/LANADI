@@ -108,7 +108,7 @@ private fun MobileHomeLayout(navController: NavController, viewModel: HomeViewMo
             Spacer(Modifier.height(8.dp))
             ListRowKategori(state, viewModel)
             Spacer(Modifier.height(16.dp))
-            ListGridProduk(state, produkState, viewModel)
+            ListGridProduk(state, viewModel)
         }
         if(produkState.isAnimating) {
             FlyingCartItem(
@@ -166,7 +166,7 @@ private fun ListRowKategori(state: HomeState, viewModel: HomeViewModel) {
 }
 
 @Composable
-private fun ListGridProduk(state: HomeState, produkState: ProdukState, viewModel: HomeViewModel) {
+private fun ListGridProduk(state: HomeState, viewModel: HomeViewModel) {
     Column {
         Text("Daftar Menu",
             style = TextStyle(color = Color.Gray)
