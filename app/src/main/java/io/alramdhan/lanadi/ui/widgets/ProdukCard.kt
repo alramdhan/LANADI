@@ -32,6 +32,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -39,14 +40,13 @@ import io.alramdhan.lanadi.core.utils.toRupiah
 import io.alramdhan.lanadi.domain.models.Produk
 
 @Composable
-fun ProductItem(isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (Offset) -> Unit) {
+fun ProductItem(isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (Offset, IntSize) -> Unit) {
     var currentOffset by remember { mutableStateOf(Offset.Zero) }
+    var currentSize by remember { mutableStateOf(IntSize.Zero) }
+
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .onGloballyPositioned { coordinates ->
-                currentOffset = coordinates.localToWindow(Offset.Zero)
-            },
+            .fillMaxWidth(),
 //            .graphicsLayer {
 //                scaleX = scale.value
 //                scaleY = scale.value
@@ -59,7 +59,7 @@ fun ProductItem(isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (O
             disabledContentColor = Color.Black
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        onClick = { onTapProdukCard(currentOffset) }
+        onClick = { onTapProdukCard(currentOffset, currentSize) }
     ) {
         Column {
             // Placeholder Gambar
@@ -67,7 +67,11 @@ fun ProductItem(isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (O
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .onGloballyPositioned { coordinates ->
+                        currentOffset = coordinates.localToWindow(Offset.Zero)
+                        currentSize = coordinates.size / 2
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 when(isLoading) {

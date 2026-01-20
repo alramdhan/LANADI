@@ -39,6 +39,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import io.alramdhan.lanadi.core.constants.AppString
@@ -80,6 +81,8 @@ fun HomeScreen(
 @Composable
 private fun MobileHomeLayout(navController: NavController, viewModel: HomeViewModel, state: HomeState, produkState: ProdukState) {
     var cartIconCoords by remember { mutableStateOf(Offset.Zero) }
+    var cartIconSize by remember { mutableStateOf(IntSize.Zero) }
+
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.padding(horizontal = 16.dp)) {
             Row(
@@ -92,12 +95,13 @@ private fun MobileHomeLayout(navController: NavController, viewModel: HomeViewMo
                     text = AppString.APP_NAME,
                     fontSize = Typography.titleLarge.fontSize
                 )
-                IconButton(
-                    modifier = Modifier
-                        .onGloballyPositioned { cartIconCoords = it.positionInRoot() },
-                    onClick = {}
-                ) {
+                IconButton({}) {
                     Icon(
+                        modifier = Modifier
+                            .onGloballyPositioned {
+                                cartIconCoords = it.positionInRoot()
+                                cartIconSize = it.size
+                            },
                         imageVector = Icons.Outlined.NoteAlt,
                         contentDescription = "",
                         tint = MaterialTheme.colorScheme.primary
@@ -114,7 +118,9 @@ private fun MobileHomeLayout(navController: NavController, viewModel: HomeViewMo
             FlyingCartItem(
                 startOffset = produkState.startCoords,
                 endOffset = cartIconCoords,
-                onAnimationFinished = { viewModel.onProdukIntent(ProdukIntent.AnimationFinished) }
+                onAnimationFinished = { viewModel.onProdukIntent(ProdukIntent.AnimationFinished) },
+                startSize = produkState.startSize,
+                targetSize = cartIconSize
             )
         }
     }
@@ -181,13 +187,13 @@ private fun ListGridProduk(state: HomeState, viewModel: HomeViewModel) {
         ) {
             when(state.isProdukLoading) {
                 true -> items(10) {
-                    ProductItem(true, null) {}
+                    ProductItem(true, null) { offset, size -> }
                 }
                 else -> items(state.produks.size) { index ->
                     val produk = state.produks[index]
-                    ProductItem(produk = produk) { offset ->
+                    ProductItem(produk = produk) { offset, size ->
                         Log.d("FLying cart", "off $offset")
-                        viewModel.onProdukIntent(ProdukIntent.AddToCart(produk, offset))
+                        viewModel.onProdukIntent(ProdukIntent.AddToCart(produk, offset, size))
                     }
                 }
             }

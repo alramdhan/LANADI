@@ -47,7 +47,7 @@ class HomeViewModel(
         when(intent) {
             is ProdukIntent.AddToCart -> {
                 _produkState.update {
-                    it.copy(startCoords = intent.coords, isAnimating = true)
+                    it.copy(startCoords = intent.coords, startSize = intent.cardSize, isAnimating = true)
                 }
             }
             is ProdukIntent.AnimationFinished -> _produkState.update { it.copy(isAnimating = false) }
