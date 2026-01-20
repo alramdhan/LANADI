@@ -8,6 +8,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.LaunchedEffect
 import io.alramdhan.lanadi.core.di.appModule
+import io.alramdhan.lanadi.core.di.databaseModule
 import io.alramdhan.lanadi.core.di.networkModule
 import io.alramdhan.lanadi.data.local.TokenManager
 import io.alramdhan.lanadi.navigation.NavigationStack
@@ -28,6 +29,7 @@ class MainActivity : ComponentActivity() {
             androidContext(this@MainActivity)
             modules(networkModule)
             modules(appModule)
+            modules(databaseModule)
         }
         enableEdgeToEdge()
         setContent {

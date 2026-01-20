@@ -45,7 +45,7 @@ fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?, token: String?,
         val navController = rememberNavController()
         val graph = navController.createGraph(startDestination = Screen.Initial.route) {
             composable(Screen.Initial.route) {
-                if(token.isNullOrEmpty() || onUnauthorized == true) {
+                if(onUnauthorized == true || token.isNullOrEmpty()) {
                     LoginScreen(
                         windowWidthSizeClass = windowWidthSizeClass,
                         navController = navController,
