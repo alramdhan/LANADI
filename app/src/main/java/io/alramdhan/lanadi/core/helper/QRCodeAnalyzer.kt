@@ -1,4 +1,4 @@
-package io.alramdhan.lanadi.ui.home.feature
+package io.alramdhan.lanadi.core.helper
 
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage

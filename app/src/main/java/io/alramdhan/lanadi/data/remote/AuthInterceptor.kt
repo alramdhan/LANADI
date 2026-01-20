@@ -1,7 +1,7 @@
 package io.alramdhan.lanadi.data.remote
 
 import io.alramdhan.lanadi.data.local.TokenManager
-import io.alramdhan.lanadi.viewmodels.auth.AuthManager
+import io.alramdhan.lanadi.data.local.pref.AuthManager
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response

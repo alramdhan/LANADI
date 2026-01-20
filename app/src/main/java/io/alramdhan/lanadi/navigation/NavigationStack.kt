@@ -24,6 +24,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
+import io.alramdhan.lanadi.core.helper.PermissionHelper
 import io.alramdhan.lanadi.ui.auth.LoginScreen
 import io.alramdhan.lanadi.ui.home.MenuTab
 import io.alramdhan.lanadi.ui.home.feature.CameraQRScanner
@@ -32,15 +33,6 @@ import io.alramdhan.lanadi.ui.home.feature.CameraQRScanner
 @Composable
 fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?, token: String?, onUnauthorized: Boolean?) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    var hasCameraPermission by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
-        )
-    }
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -50,23 +42,11 @@ fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?, token: String?,
             Toast.makeText(context, "Izin Kamera Ditolak.", Toast.LENGTH_SHORT).show()
         }
     }
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                hasCameraPermission = ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.CAMERA
-                ) == PackageManager.PERMISSION_GRANTED
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
 
     LaunchedEffect(Unit) {
-        if (!hasCameraPermission) {
+        if(PermissionHelper.hasPermissions(context, Manifest.permission.CAMERA)) {
+            println("sudah ada izin kamera")
+        } else {
             permissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }

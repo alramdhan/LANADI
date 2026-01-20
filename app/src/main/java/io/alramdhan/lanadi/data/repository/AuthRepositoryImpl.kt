@@ -2,7 +2,7 @@ package io.alramdhan.lanadi.data.repository
 
 import io.alramdhan.lanadi.data.local.TokenManager
 import io.alramdhan.lanadi.data.mapper.toDomain
-import io.alramdhan.lanadi.data.remote.dto.LoginRequest
+import io.alramdhan.lanadi.data.remote.dto.request.LoginRequest
 import io.alramdhan.lanadi.data.remote.ApiService
 import io.alramdhan.lanadi.domain.models.CurrentUser
 import io.alramdhan.lanadi.domain.repository.IAuthRepository

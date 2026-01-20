@@ -1,4 +1,4 @@
-package io.alramdhan.lanadi.data.remote.dto
+package io.alramdhan.lanadi.data.remote.dto.response
 
 import com.google.gson.annotations.SerializedName
 import io.alramdhan.lanadi.domain.models.Kasir

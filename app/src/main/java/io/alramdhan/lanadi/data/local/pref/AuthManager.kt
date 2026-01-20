@@ -1,4 +1,4 @@
-package io.alramdhan.lanadi.viewmodels.auth
+package io.alramdhan.lanadi.data.local.pref
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

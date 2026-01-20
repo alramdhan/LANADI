@@ -64,7 +64,6 @@ fun SharedTransitionScope.MenuTab(
     homeVModel: HomeViewModel = koinViewModel(),
     settingVModel: SettingViewModel = koinViewModel()
 ) {
-
     val listTabScreen = listOf(
         ScreenTabItem(BottomNavScreen.Home.route, {
             HomeScreen(

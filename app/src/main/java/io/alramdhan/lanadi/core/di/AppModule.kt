@@ -5,6 +5,7 @@ import io.alramdhan.lanadi.data.repository.ProdukRepositoryImpl
 import io.alramdhan.lanadi.domain.repository.IAuthRepository
 import io.alramdhan.lanadi.domain.repository.IProdukRepository
 import io.alramdhan.lanadi.domain.usecase.GetKategoriUseCase
+import io.alramdhan.lanadi.domain.usecase.GetProdukUseCase
 import io.alramdhan.lanadi.domain.usecase.LoginUseCase
 import io.alramdhan.lanadi.domain.usecase.LogoutUseCase
 import io.alramdhan.lanadi.viewmodels.auth.LoginViewModel
@@ -27,5 +28,6 @@ val appModule = module {
         ProdukRepositoryImpl(get())
     }
     factory { GetKategoriUseCase(get()) }
-    viewModel { HomeViewModel(get()) }
+    factory { GetProdukUseCase(get()) }
+    viewModel { HomeViewModel(get(), get()) }
 }

@@ -1,13 +1,8 @@
 package io.alramdhan.lanadi.ui.home
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,17 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.NoteAlt
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,40 +28,39 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import io.alramdhan.lanadi.data.Product
-import io.alramdhan.lanadi.data.dummyProducts
-import io.alramdhan.lanadi.domain.models.Kategori
+import io.alramdhan.lanadi.core.constants.AppString
+import io.alramdhan.lanadi.ui.animations.FlyingCartItem
+import io.alramdhan.lanadi.ui.home.produk.ProdukIntent
+import io.alramdhan.lanadi.ui.home.produk.ProdukState
 import io.alramdhan.lanadi.ui.theme.Typography
+import io.alramdhan.lanadi.ui.widgets.KategoriItem
 import io.alramdhan.lanadi.ui.widgets.LanadiTextField
-import io.alramdhan.lanadi.ui.widgets.SkeletonPlaceholder
+import io.alramdhan.lanadi.ui.widgets.ProductItem
 import io.alramdhan.lanadi.viewmodels.home.HomeViewModel
-import kotlinx.coroutines.delay
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     widthSizeClass: WindowWidthSizeClass?,
     navController: NavController,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsState()
+    val produkState by viewModel.produkState.collectAsState()
 
     LaunchedEffect(key1 = true) {
         viewModel.effect.collect { effect ->
@@ -82,34 +71,52 @@ fun HomeScreen(
     }
 
     when(widthSizeClass) {
-        WindowWidthSizeClass.Compact -> MobileHomeLayout(navController, viewModel, state)
+        WindowWidthSizeClass.Compact -> MobileHomeLayout(navController, viewModel, state, produkState)
         WindowWidthSizeClass.Medium -> TabletHomeLayout(navController)
         WindowWidthSizeClass.Expanded -> TabletHomeLayout(navController)
     }
 }
 
 @Composable
-private fun MobileHomeLayout(navController: NavController, viewModel: HomeViewModel, state: HomeState) {
-    Column(Modifier.padding(horizontal = 16.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Menu Menu",
-                fontSize = Typography.titleLarge.fontSize
-            )
-            IconButton({}) {
-                Icon(imageVector = Icons.Outlined.NoteAlt, contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+private fun MobileHomeLayout(navController: NavController, viewModel: HomeViewModel, state: HomeState, produkState: ProdukState) {
+    var cartIconCoords by remember { mutableStateOf(Offset.Zero) }
+    Box(Modifier.fillMaxSize()) {
+        Column(Modifier.padding(horizontal = 16.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = AppString.APP_NAME,
+                    fontSize = Typography.titleLarge.fontSize
+                )
+                IconButton(
+                    modifier = Modifier
+                        .onGloballyPositioned { cartIconCoords = it.positionInRoot() },
+                    onClick = {}
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.NoteAlt,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
+            SearchTextField(state, viewModel)
+            Spacer(Modifier.height(8.dp))
+            ListRowKategori(state, viewModel)
+            Spacer(Modifier.height(16.dp))
+            ListGridProduk(state, produkState, viewModel)
         }
-        SearchTextField(state, viewModel)
-        Spacer(Modifier.height(8.dp))
-        ListRowKategori(state, viewModel)
-        Spacer(Modifier.height(16.dp))
-        ListGridProduk()
+        if(produkState.isAnimating) {
+            FlyingCartItem(
+                startOffset = produkState.startCoords,
+                endOffset = cartIconCoords,
+                onAnimationFinished = { viewModel.onProdukIntent(ProdukIntent.AnimationFinished) }
+            )
+        }
     }
 }
 
@@ -159,71 +166,7 @@ private fun ListRowKategori(state: HomeState, viewModel: HomeViewModel) {
 }
 
 @Composable
-private fun KategoriItem(isLoading: Boolean = false, kategori: Kategori? = null, selected: Boolean = false, onKategoriSelected: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .width(100.dp)
-            .height(125.dp),
-        colors = CardColors(
-            containerColor = if(selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-            disabledContainerColor = Color.Gray,
-            contentColor = if(selected) Color.White else Color.Black,
-            disabledContentColor = Color.Black
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        onClick = onKategoriSelected
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Placeholder Gambar
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                when(isLoading) {
-                    true -> SkeletonPlaceholder(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(88.dp),
-                        roundedShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
-                    )
-                    else -> AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(kategori!!.image)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = "image kategori ${kategori.id}",
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 6.dp, vertical = 4.dp),
-            ) {
-                when(isLoading) {
-                    true ->  SkeletonPlaceholder(modifier = Modifier.width(60.dp))
-                    else -> Text(
-                        text = kategori!!.name,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ListGridProduk() {
+private fun ListGridProduk(state: HomeState, produkState: ProdukState, viewModel: HomeViewModel) {
     Column {
         Text("Daftar Menu",
             style = TextStyle(color = Color.Gray)
@@ -236,75 +179,18 @@ private fun ListGridProduk() {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(dummyProducts.size) { index ->
-                ProductItem(dummyProducts[index])
+            when(state.isProdukLoading) {
+                true -> items(10) {
+                    ProductItem(true, null) {}
+                }
+                else -> items(state.produks.size) { index ->
+                    val produk = state.produks[index]
+                    ProductItem(produk = produk) { offset ->
+                        Log.d("FLying cart", "off $offset")
+                        viewModel.onProdukIntent(ProdukIntent.AddToCart(produk, offset))
+                    }
+                }
             }
-        }
-    }
-}
-
-@Composable
-private fun ProductItem(product: Product) {
-    val animateItems = remember {
-        mutableStateListOf<Product>().apply {
-            addAll(dummyProducts)
-        }
-    }
-    val scale = remember { Animatable(0f) }
-    val alpha = remember { Animatable(0f) }
-
-    LaunchedEffect(Unit) {
-        delay(product.id * 50L)
-        scale.animateTo(
-            targetValue = 1f,
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow
-            )
-        )
-        alpha.animateTo(1f, animationSpec = tween(300))
-    }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .graphicsLayer {
-                scaleX = scale.value
-                scaleY = scale.value
-                this.alpha = alpha.value
-            },
-        colors = CardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            disabledContainerColor = Color.Gray,
-            contentColor = Color.Black,
-            disabledContentColor = Color.Black
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column {
-            // Placeholder Gambar
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(painterResource(product.imageRes), contentDescription = "gambar produk")
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = product.name,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = product.price,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
         }
     }
 }
