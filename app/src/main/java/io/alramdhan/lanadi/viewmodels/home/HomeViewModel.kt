@@ -23,9 +23,6 @@ class HomeViewModel(
     private val _uiState = MutableStateFlow(HomeState())
     val uiState = _uiState.asStateFlow()
 
-//    private val _produkState = MutableStateFlow(ProdukState())
-//    val produkState = _produkState.asStateFlow()
-
     private val _effect = Channel<HomeEffect>()
     val effect = _effect.receiveAsFlow()
 
@@ -40,17 +37,6 @@ class HomeViewModel(
             is HomeIntent.SearchTextChanged -> _uiState.update { it.copy(searchMenu = intent.text) }
         }
     }
-
-//    fun onProdukIntent(intent: ProdukIntent) {
-//        when(intent) {
-//            is ProdukIntent.AddToCart -> {
-//                _produkState.update {
-//                    it.copy(startCoords = intent.coords, startSize = intent.cardSize, isAnimating = true)
-//                }
-//            }
-//            is ProdukIntent.AnimationFinished -> _produkState.update { it.copy(isAnimating = false) }
-//        }
-//    }
 
     private fun fetchDataHome() {
         viewModelScope.launch {

@@ -36,7 +36,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -49,7 +48,6 @@ import androidx.navigation.NavController
 import io.alramdhan.lanadi.core.constants.AppString
 import io.alramdhan.lanadi.domain.models.CartProduk
 import io.alramdhan.lanadi.ui.animations.FlyingCartItem
-import io.alramdhan.lanadi.ui.home.produk.ProdukIntent
 import io.alramdhan.lanadi.ui.home.produk.ProdukState
 import io.alramdhan.lanadi.ui.theme.Typography
 import io.alramdhan.lanadi.ui.components.KategoriItem
