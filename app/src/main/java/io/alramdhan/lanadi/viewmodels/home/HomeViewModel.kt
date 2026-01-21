@@ -7,8 +7,6 @@ import io.alramdhan.lanadi.domain.usecase.GetProdukUseCase
 import io.alramdhan.lanadi.ui.home.HomeEffect
 import io.alramdhan.lanadi.ui.home.HomeIntent
 import io.alramdhan.lanadi.ui.home.HomeState
-import io.alramdhan.lanadi.ui.home.produk.ProdukIntent
-import io.alramdhan.lanadi.ui.home.produk.ProdukState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -25,8 +23,8 @@ class HomeViewModel(
     private val _uiState = MutableStateFlow(HomeState())
     val uiState = _uiState.asStateFlow()
 
-    private val _produkState = MutableStateFlow(ProdukState())
-    val produkState = _produkState.asStateFlow()
+//    private val _produkState = MutableStateFlow(ProdukState())
+//    val produkState = _produkState.asStateFlow()
 
     private val _effect = Channel<HomeEffect>()
     val effect = _effect.receiveAsFlow()
@@ -43,16 +41,16 @@ class HomeViewModel(
         }
     }
 
-    fun onProdukIntent(intent: ProdukIntent) {
-        when(intent) {
-            is ProdukIntent.AddToCart -> {
-                _produkState.update {
-                    it.copy(startCoords = intent.coords, startSize = intent.cardSize, isAnimating = true)
-                }
-            }
-            is ProdukIntent.AnimationFinished -> _produkState.update { it.copy(isAnimating = false) }
-        }
-    }
+//    fun onProdukIntent(intent: ProdukIntent) {
+//        when(intent) {
+//            is ProdukIntent.AddToCart -> {
+//                _produkState.update {
+//                    it.copy(startCoords = intent.coords, startSize = intent.cardSize, isAnimating = true)
+//                }
+//            }
+//            is ProdukIntent.AnimationFinished -> _produkState.update { it.copy(isAnimating = false) }
+//        }
+//    }
 
     private fun fetchDataHome() {
         viewModelScope.launch {

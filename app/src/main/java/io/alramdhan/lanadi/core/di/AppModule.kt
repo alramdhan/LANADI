@@ -1,20 +1,28 @@
 package io.alramdhan.lanadi.core.di
 
+import io.alramdhan.lanadi.core.utils.DefaultDispatcherProvider
+import io.alramdhan.lanadi.core.utils.DispatcherProvider
 import io.alramdhan.lanadi.data.repository.AuthRepositoryImpl
+import io.alramdhan.lanadi.data.repository.CartRepositoryImpl
 import io.alramdhan.lanadi.data.repository.ProdukRepositoryImpl
 import io.alramdhan.lanadi.domain.repository.IAuthRepository
+import io.alramdhan.lanadi.domain.repository.ICartRepository
 import io.alramdhan.lanadi.domain.repository.IProdukRepository
+import io.alramdhan.lanadi.domain.usecase.AddToCartUseCase
+import io.alramdhan.lanadi.domain.usecase.GetCartUseCase
 import io.alramdhan.lanadi.domain.usecase.GetKategoriUseCase
 import io.alramdhan.lanadi.domain.usecase.GetProdukUseCase
 import io.alramdhan.lanadi.domain.usecase.LoginUseCase
 import io.alramdhan.lanadi.domain.usecase.LogoutUseCase
 import io.alramdhan.lanadi.viewmodels.auth.LoginViewModel
 import io.alramdhan.lanadi.viewmodels.home.HomeViewModel
+import io.alramdhan.lanadi.viewmodels.home.cart.CartViewModel
 import io.alramdhan.lanadi.viewmodels.home.setting.SettingViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
+    single<DispatcherProvider> { DefaultDispatcherProvider() }
     single<IAuthRepository> {
         AuthRepositoryImpl(get(), get())
     }
@@ -30,4 +38,11 @@ val appModule = module {
     factory { GetKategoriUseCase(get()) }
     factory { GetProdukUseCase(get()) }
     viewModel { HomeViewModel(get(), get()) }
+
+    single<ICartRepository> { CartRepositoryImpl(get(), get()) }
+
+    factory { GetCartUseCase(get()) }
+    factory { AddToCartUseCase(get()) }
+
+    viewModel { CartViewModel(get(), get()) }
 }

@@ -57,8 +57,8 @@ import androidx.navigation.NavController
 import io.alramdhan.lanadi.R
 import io.alramdhan.lanadi.core.constants.AppString
 import io.alramdhan.lanadi.navigation.Screen
-import io.alramdhan.lanadi.ui.widgets.ModernLanButton
-import io.alramdhan.lanadi.ui.widgets.LanadiTextField
+import io.alramdhan.lanadi.ui.components.ModernLanButton
+import io.alramdhan.lanadi.ui.components.LanadiTextField
 import io.alramdhan.lanadi.viewmodels.auth.LoginViewModel
 import org.koin.androidx.compose.koinViewModel
 

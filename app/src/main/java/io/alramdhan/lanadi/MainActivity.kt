@@ -28,8 +28,8 @@ class MainActivity : ComponentActivity() {
         startKoin {
             androidContext(this@MainActivity)
             modules(networkModule)
-            modules(appModule)
             modules(databaseModule)
+            modules(appModule)
         }
         enableEdgeToEdge()
         setContent {

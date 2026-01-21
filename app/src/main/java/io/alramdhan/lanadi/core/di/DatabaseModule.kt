@@ -20,10 +20,4 @@ val databaseModule = module {
     }
 
     single { get<AppDatabase>().cartDao() }
-    single<ICartRepository> { CartRepositoryImpl(get()) }
-
-    factory { GetCartUseCase(get()) }
-    factory { AddToCartUseCase(get()) }
-
-    viewModel { CartViewModel(get(), get()) }
 }

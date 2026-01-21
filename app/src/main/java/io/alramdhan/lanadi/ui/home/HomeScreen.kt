@@ -3,6 +3,7 @@ package io.alramdhan.lanadi.ui.home
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,9 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.NoteAlt
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -43,14 +47,18 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import io.alramdhan.lanadi.core.constants.AppString
+import io.alramdhan.lanadi.domain.models.CartProduk
 import io.alramdhan.lanadi.ui.animations.FlyingCartItem
 import io.alramdhan.lanadi.ui.home.produk.ProdukIntent
 import io.alramdhan.lanadi.ui.home.produk.ProdukState
 import io.alramdhan.lanadi.ui.theme.Typography
-import io.alramdhan.lanadi.ui.widgets.KategoriItem
-import io.alramdhan.lanadi.ui.widgets.LanadiTextField
-import io.alramdhan.lanadi.ui.widgets.ProductItem
+import io.alramdhan.lanadi.ui.components.KategoriItem
+import io.alramdhan.lanadi.ui.components.LanadiTextField
+import io.alramdhan.lanadi.ui.components.ProductItem
+import io.alramdhan.lanadi.ui.home.cart.CartIntent
+import io.alramdhan.lanadi.ui.home.cart.CartState
 import io.alramdhan.lanadi.viewmodels.home.HomeViewModel
+import io.alramdhan.lanadi.viewmodels.home.cart.CartViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -58,10 +66,12 @@ fun HomeScreen(
     widthSizeClass: WindowWidthSizeClass?,
     navController: NavController,
     viewModel: HomeViewModel,
+    cartViewModel: CartViewModel
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsState()
-    val produkState by viewModel.produkState.collectAsState()
+    val produkState by cartViewModel.produkState.collectAsState()
+    val cartState by cartViewModel.uiState.collectAsState()
 
     LaunchedEffect(key1 = true) {
         viewModel.effect.collect { effect ->
@@ -72,14 +82,28 @@ fun HomeScreen(
     }
 
     when(widthSizeClass) {
-        WindowWidthSizeClass.Compact -> MobileHomeLayout(navController, viewModel, state, produkState)
+        WindowWidthSizeClass.Compact -> MobileHomeLayout(
+            navController,
+            viewModel,
+            cartViewModel,
+            state,
+            produkState,
+            cartState
+        )
         WindowWidthSizeClass.Medium -> TabletHomeLayout(navController)
         WindowWidthSizeClass.Expanded -> TabletHomeLayout(navController)
     }
 }
 
 @Composable
-private fun MobileHomeLayout(navController: NavController, viewModel: HomeViewModel, state: HomeState, produkState: ProdukState) {
+private fun MobileHomeLayout(
+    navController: NavController,
+    viewModel: HomeViewModel,
+    cartViewModel: CartViewModel,
+    state: HomeState,
+    produkState: ProdukState,
+    cartState: CartState
+) {
     var cartIconCoords by remember { mutableStateOf(Offset.Zero) }
     var cartIconSize by remember { mutableStateOf(IntSize.Zero) }
 
@@ -95,30 +119,37 @@ private fun MobileHomeLayout(navController: NavController, viewModel: HomeViewMo
                     text = AppString.APP_NAME,
                     fontSize = Typography.titleLarge.fontSize
                 )
-                IconButton({}) {
-                    Icon(
-                        modifier = Modifier
-                            .onGloballyPositioned {
-                                cartIconCoords = it.positionInRoot()
-                                cartIconSize = it.size
-                            },
-                        imageVector = Icons.Outlined.NoteAlt,
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                Box {
+                    IconButton({}) {
+                        Icon(
+                            modifier = Modifier
+                                .onGloballyPositioned {
+                                    cartIconCoords = it.positionInRoot()
+                                    cartIconSize = it.size
+                                },
+                            imageVector = Icons.Outlined.NoteAlt,
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    if(cartState.item.isNotEmpty()) {
+                        Badge(Modifier.background(color = Color.Red, CircleShape)) {
+                            Text("${cartState.item.size}")
+                        }
+                    }
                 }
             }
             SearchTextField(state, viewModel)
             Spacer(Modifier.height(8.dp))
             ListRowKategori(state, viewModel)
             Spacer(Modifier.height(16.dp))
-            ListGridProduk(state, viewModel)
+            ListGridProduk(state, cartViewModel)
         }
         if(produkState.isAnimating) {
             FlyingCartItem(
                 startOffset = produkState.startCoords,
                 endOffset = cartIconCoords,
-                onAnimationFinished = { viewModel.onProdukIntent(ProdukIntent.AnimationFinished) },
+                onAnimationFinished = { cartViewModel.onIntent(CartIntent.AnimationFinished) },
                 startSize = produkState.startSize,
                 targetSize = cartIconSize
             )
@@ -172,7 +203,7 @@ private fun ListRowKategori(state: HomeState, viewModel: HomeViewModel) {
 }
 
 @Composable
-private fun ListGridProduk(state: HomeState, viewModel: HomeViewModel) {
+private fun ListGridProduk(state: HomeState, cartViewModel: CartViewModel) {
     Column {
         Text("Daftar Menu",
             style = TextStyle(color = Color.Gray)
@@ -187,13 +218,23 @@ private fun ListGridProduk(state: HomeState, viewModel: HomeViewModel) {
         ) {
             when(state.isProdukLoading) {
                 true -> items(10) {
-                    ProductItem(true, null) { offset, size -> }
+                    ProductItem(true, null) { _, _ -> }
                 }
                 else -> items(state.produks.size) { index ->
                     val produk = state.produks[index]
                     ProductItem(produk = produk) { offset, size ->
                         Log.d("FLying cart", "off $offset")
-                        viewModel.onProdukIntent(ProdukIntent.AddToCart(produk, offset, size))
+                        cartViewModel.onIntent(CartIntent.AddItem(
+                            CartProduk(
+                                id = produk.id,
+                                name = produk.namaProduk,
+                                price = produk.harga.toDouble(),
+                                quantity = 1,
+                                imageUrl = produk.image
+                            ),
+                            offset,
+                            size
+                        ))
                     }
                 }
             }

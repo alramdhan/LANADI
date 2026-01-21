@@ -1,4 +1,4 @@
-package io.alramdhan.lanadi.ui.widgets
+package io.alramdhan.lanadi.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
