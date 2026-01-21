@@ -1,7 +1,6 @@
 package io.alramdhan.lanadi.ui.home
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -48,11 +47,11 @@ import androidx.navigation.NavController
 import io.alramdhan.lanadi.core.constants.AppString
 import io.alramdhan.lanadi.domain.models.CartProduk
 import io.alramdhan.lanadi.ui.animations.FlyingItemAnimation
-import io.alramdhan.lanadi.ui.home.produk.ProdukState
 import io.alramdhan.lanadi.ui.theme.Typography
 import io.alramdhan.lanadi.ui.components.KategoriItem
 import io.alramdhan.lanadi.ui.components.LanadiTextField
 import io.alramdhan.lanadi.ui.components.ProductItem
+import io.alramdhan.lanadi.ui.home.cart.CartEffect
 import io.alramdhan.lanadi.ui.home.cart.CartIntent
 import io.alramdhan.lanadi.ui.home.cart.CartState
 import io.alramdhan.lanadi.viewmodels.home.HomeViewModel
@@ -68,13 +67,17 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsState()
-    val produkState by cartViewModel.produkState.collectAsState()
     val cartState by cartViewModel.uiState.collectAsState()
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when(effect) {
                 is HomeEffect.ShowToastMessage -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+        cartViewModel.effect.collect { effect ->
+            when(effect) {
+                is CartEffect.ShowToast -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -85,7 +88,6 @@ fun HomeScreen(
             viewModel,
             cartViewModel,
             state,
-            produkState,
             cartState
         )
         WindowWidthSizeClass.Medium -> TabletHomeLayout(navController)
@@ -99,11 +101,9 @@ private fun MobileHomeLayout(
     viewModel: HomeViewModel,
     cartViewModel: CartViewModel,
     state: HomeState,
-    produkState: ProdukState,
     cartState: CartState
 ) {
     var cartIconCoords by remember { mutableStateOf(Offset.Zero) }
-    var cartIconSize by remember { mutableStateOf(IntSize.Zero) }
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.padding(horizontal = 16.dp)) {
@@ -118,21 +118,23 @@ private fun MobileHomeLayout(
                     fontSize = Typography.titleLarge.fontSize
                 )
                 Box {
-                    IconButton({}) {
+                    IconButton(
+                        modifier = Modifier
+                            .onGloballyPositioned {
+                                cartIconCoords = it.positionInRoot()
+                                cartViewModel.onIntent(CartIntent.UpdateCartPosition(cartIconCoords))
+                            },
+                        onClick = {}
+                    ) {
                         Icon(
-                            modifier = Modifier
-                                .onGloballyPositioned {
-                                    cartIconCoords = it.localToRoot(Offset.Zero)
-                                    cartIconSize = it.size
-                                },
                             imageVector = Icons.Outlined.NoteAlt,
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
-                    if(cartState.item.isNotEmpty()) {
+                    if(cartState.products.isNotEmpty()) {
                         Badge(Modifier.background(color = Color.Red, CircleShape)) {
-                            Text("${cartState.item.size}")
+                            Text("${cartState.products.size}")
                         }
                     }
                 }
@@ -143,16 +145,19 @@ private fun MobileHomeLayout(
             Spacer(Modifier.height(16.dp))
             ListGridProduk(state, cartViewModel)
         }
-        if(produkState.isAnimating) {
-            FlyingItemAnimation(
-                startOffset = produkState.startCoords,
-                endOffset = cartIconCoords,
-                onAnimationFinished = { cartViewModel.onIntent(CartIntent.AnimationFinished) },
-                startSize = produkState.startSize,
-                targetSize = cartIconSize,
-                painter = produkState.image
-            )
+        cartState.flyingItems.forEach { fi ->
+            FlyingItemAnimation(fi) { cartViewModel.onIntent(CartIntent.AnimationFinished(it)) }
         }
+//        if(cartState.isAnimating) {
+//            FlyingItemAnimation(
+//                startOffset = produkState.startCoords,
+//                endOffset = cartIconCoords,
+//                onAnimationFinished = { cartViewModel.onIntent(CartIntent.AnimationFinished) },
+//                startSize = produkState.startSize,
+//                targetSize = cartIconSize,
+//                painter = produkState.image
+//            )
+//        }
     }
 }
 
@@ -222,18 +227,17 @@ private fun ListGridProduk(state: HomeState, cartViewModel: CartViewModel) {
                 else -> items(state.produks.size) { index ->
                     val produk = state.produks[index]
                     ProductItem(produk = produk) { offset, size, painter ->
-                        Log.d("FLying cart", "off $offset")
                         cartViewModel.onIntent(CartIntent.AddItem(
-                            CartProduk(
+                            item = CartProduk(
                                 id = produk.id,
                                 name = produk.namaProduk,
                                 price = produk.harga.toDouble(),
                                 quantity = 1,
                                 imageUrl = produk.image
                             ),
-                            offset,
-                            size,
-                            painter
+                            startPosition = offset,
+                            startSize = size,
+                            painter = painter
                         ))
                     }
                 }

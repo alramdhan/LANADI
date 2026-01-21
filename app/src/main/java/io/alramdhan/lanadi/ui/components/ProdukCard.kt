@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -31,8 +33,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -49,13 +51,7 @@ fun ProductItem(isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (O
     val painter = if(produk != null) rememberAsyncImagePainter(model = produk.image) else null
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-//            .graphicsLayer {
-//                scaleX = scale.value
-//                scaleY = scale.value
-//                this.alpha = alpha.value
-//            },
+        modifier = Modifier.fillMaxWidth(),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             disabledContainerColor = Color.Gray,
@@ -65,17 +61,18 @@ fun ProductItem(isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (O
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         onClick = { onTapProdukCard(currentOffset, currentSize, painter!!) }
     ) {
-        Column {
+        Column(modifier = Modifier
+            .onGloballyPositioned { img ->
+                currentOffset = img.positionInRoot()
+                currentSize = img.size
+            }
+        ) {
             // Placeholder Gambar
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
-                    .onGloballyPositioned { coordinates ->
-                        currentOffset = coordinates.localToRoot(Offset.Zero)
-                        currentSize = coordinates.size / 2
-                    },
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 when(isLoading) {
@@ -91,7 +88,7 @@ fun ProductItem(isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (O
                             .crossfade(true)
                             .build(),
                         contentDescription = "image kategori ${produk.id}",
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
                     )
                 }
             }

@@ -19,13 +19,19 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
+import io.alramdhan.lanadi.ui.home.produk.FlyingItem
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @Composable
-fun FlyingItemAnimation(
+fun FlyingItemAnimationBAK(
     startOffset: Offset,
     endOffset: Offset,
     startSize: IntSize,
@@ -78,6 +84,44 @@ fun FlyingItemAnimation(
                 scaleX = scale
                 scaleY = scale
             }
+    )
+}
+
+@Composable
+fun FlyingItemAnimation(
+    item: FlyingItem,
+    onAnimationFinishid: (Long) -> Unit
+) {
+    val density = LocalDensity.current
+    val startWidth = with(density) { item.startSize.width.toDp() }
+    val startHeight = with(density) { item.startSize.height.toDp() }
+    val targetSizeDp = 24.dp
+
+    val animationProgress = remember { Animatable(0f) }
+
+    LaunchedEffect(item) {
+        animationProgress.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(1000, easing = FastOutSlowInEasing)
+        )
+
+        onAnimationFinishid(item.id)
+    }
+    val progress = animationProgress.value
+    val currentX = item.startPosition.x + (item.targetPosition.x - item.startPosition.x) * progress
+    val currentY = item.startPosition.y + (item.targetPosition.y - item.startPosition.y) * progress
+
+    val currentWidth = lerp(startWidth, targetSizeDp, progress)
+    val currentHeight = lerp(startHeight, targetSizeDp, progress)
+
+    Image(
+        painter = item.image!!,
+        contentDescription = "flying image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .size(60.dp) // Ukuran awal gambar terbang
+            .offset { IntOffset(currentX.roundToInt(), currentY.roundToInt()) }
+            .size(currentWidth, currentHeight)
     )
 }
 
