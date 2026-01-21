@@ -3,8 +3,6 @@ package io.alramdhan.lanadi.ui.home.cart
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
 import io.alramdhan.lanadi.domain.models.CartProduk
-import io.alramdhan.lanadi.navigation.ScreenTabItem
-import io.alramdhan.lanadi.ui.home.produk.ProdukIntent
 
 sealed class CartEffect {
     data class ShowToast(val message: String): CartEffect()

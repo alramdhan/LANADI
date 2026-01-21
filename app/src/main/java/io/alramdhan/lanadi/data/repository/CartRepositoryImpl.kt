@@ -2,7 +2,6 @@ package io.alramdhan.lanadi.data.repository
 
 import io.alramdhan.lanadi.core.utils.DispatcherProvider
 import io.alramdhan.lanadi.data.local.dao.CartDAO
-import io.alramdhan.lanadi.data.local.entity.CartEntity
 import io.alramdhan.lanadi.data.mapper.toCartEntity
 import io.alramdhan.lanadi.data.mapper.toDomain
 import io.alramdhan.lanadi.domain.models.CartProduk
