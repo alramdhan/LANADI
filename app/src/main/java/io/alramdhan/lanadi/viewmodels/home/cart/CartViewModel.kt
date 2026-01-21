@@ -33,9 +33,8 @@ class CartViewModel(
             is CartIntent.LoadCart -> fetchCart()
             is CartIntent.AddItem -> {
                 _produkState.update {
-                    it.copy(startCoords = intent.coords, startSize = intent.cardSize, isAnimating = true)
+                    it.copy(startCoords = intent.coords, startSize = intent.cardSize, isAnimating = true, image = intent.painter)
                 }
-                _uiState.update { it.copy(item = listOf(intent.item)) }
                 addItem(intent.item)
             }
             is CartIntent.AnimationFinished -> _produkState.update { it.copy(isAnimating = false) }

@@ -1,6 +1,7 @@
 package io.alramdhan.lanadi.ui.home.cart
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.IntSize
 import io.alramdhan.lanadi.domain.models.CartProduk
 
@@ -10,7 +11,7 @@ sealed class CartEffect {
 
 sealed class CartIntent {
     data object LoadCart: CartIntent()
-    data class AddItem(val item: CartProduk, val coords: Offset, val cardSize: IntSize): CartIntent()
+    data class AddItem(val item: CartProduk, val coords: Offset, val cardSize: IntSize, val painter: Painter): CartIntent()
 
     data object AnimationFinished: CartIntent()
 }

@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import io.alramdhan.lanadi.core.constants.AppString
 import io.alramdhan.lanadi.domain.models.CartProduk
-import io.alramdhan.lanadi.ui.animations.FlyingCartItem
+import io.alramdhan.lanadi.ui.animations.FlyingItemAnimation
 import io.alramdhan.lanadi.ui.home.produk.ProdukState
 import io.alramdhan.lanadi.ui.theme.Typography
 import io.alramdhan.lanadi.ui.components.KategoriItem
@@ -122,7 +122,7 @@ private fun MobileHomeLayout(
                         Icon(
                             modifier = Modifier
                                 .onGloballyPositioned {
-                                    cartIconCoords = it.positionInRoot()
+                                    cartIconCoords = it.localToRoot(Offset.Zero)
                                     cartIconSize = it.size
                                 },
                             imageVector = Icons.Outlined.NoteAlt,
@@ -144,12 +144,13 @@ private fun MobileHomeLayout(
             ListGridProduk(state, cartViewModel)
         }
         if(produkState.isAnimating) {
-            FlyingCartItem(
+            FlyingItemAnimation(
                 startOffset = produkState.startCoords,
                 endOffset = cartIconCoords,
                 onAnimationFinished = { cartViewModel.onIntent(CartIntent.AnimationFinished) },
                 startSize = produkState.startSize,
-                targetSize = cartIconSize
+                targetSize = cartIconSize,
+                painter = produkState.image
             )
         }
     }
@@ -216,11 +217,11 @@ private fun ListGridProduk(state: HomeState, cartViewModel: CartViewModel) {
         ) {
             when(state.isProdukLoading) {
                 true -> items(10) {
-                    ProductItem(true, null) { _, _ -> }
+                    ProductItem(true, null) { _, _, _ -> }
                 }
                 else -> items(state.produks.size) { index ->
                     val produk = state.produks[index]
-                    ProductItem(produk = produk) { offset, size ->
+                    ProductItem(produk = produk) { offset, size, painter ->
                         Log.d("FLying cart", "off $offset")
                         cartViewModel.onIntent(CartIntent.AddItem(
                             CartProduk(
@@ -231,7 +232,8 @@ private fun ListGridProduk(state: HomeState, cartViewModel: CartViewModel) {
                                 imageUrl = produk.image
                             ),
                             offset,
-                            size
+                            size,
+                            painter
                         ))
                     }
                 }
