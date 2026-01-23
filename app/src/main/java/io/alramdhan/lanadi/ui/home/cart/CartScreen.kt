@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeGesturesPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,15 +33,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import io.alramdhan.lanadi.ui.components.NumberStepper
+import io.alramdhan.lanadi.ui.components.SkeletonPlaceholder
 import io.alramdhan.lanadi.viewmodels.home.cart.CartViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CartScreen(
     widthSizeClass: WindowWidthSizeClass?,
@@ -67,13 +73,14 @@ fun CartScreen(
                 }
             )
         },
-        content = { _ ->
-            Column(Modifier.fillMaxSize()) {
-                ContainerListCart(
-                    modifier = Modifier.weight(1f),
-                    viewModel,
-                    state
-                )
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                Spacer(Modifier.height(20.dp))
+                ContainerListCart(viewModel, state)
                 ContainerButtonAndTotal()
             }
         }
@@ -107,19 +114,51 @@ private fun BuildHeader(navController: NavController) {
 }
 
 @Composable
-private fun ContainerListCart(modifier: Modifier, viewModel: CartViewModel, uiState: CartState) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(2) {
+private fun ContainerListCart(viewModel: CartViewModel, uiState: CartState) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(15.dp)
+    ) {
+        items(10) {
+            ItemCartTile()
+        }
+    }
+}
 
+@Composable
+private fun ItemCartTile() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            SkeletonPlaceholder(
+                modifier = Modifier.size(100.dp)
+            )
+            Column {
+                Text(
+                    "Title",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+                Text(
+                    "Harga",
+                    color = MaterialTheme.colorScheme.secondary
+                )
             }
+            NumberStepper({})
         }
     }
 }
 
 @Composable
 private fun ContainerButtonAndTotal() {
-    Box(Modifier.safeGesturesPadding().height(55.dp)) {
+    Box(Modifier.safeGesturesPadding()) {
         Text("Total")
     }
 }
