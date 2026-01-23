@@ -41,11 +41,13 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
 import io.alramdhan.lanadi.core.constants.AppString
 import io.alramdhan.lanadi.domain.models.CartProduk
+import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.ui.animations.FlyingItemAnimation
 import io.alramdhan.lanadi.ui.theme.Typography
 import io.alramdhan.lanadi.ui.components.KategoriItem
@@ -56,6 +58,7 @@ import io.alramdhan.lanadi.ui.home.cart.CartIntent
 import io.alramdhan.lanadi.ui.home.cart.CartState
 import io.alramdhan.lanadi.viewmodels.home.HomeViewModel
 import io.alramdhan.lanadi.viewmodels.home.cart.CartViewModel
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -66,18 +69,24 @@ fun HomeScreen(
     cartViewModel: CartViewModel
 ) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     val state by viewModel.uiState.collectAsState()
     val cartState by cartViewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when(effect) {
-                is HomeEffect.ShowToastMessage -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+    LaunchedEffect(lifecycleOwner) {
+        launch {
+            viewModel.effect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
+                when(effect) {
+                    is HomeEffect.ShowToastMessage -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
-        cartViewModel.effect.collect { effect ->
-            when(effect) {
-                is CartEffect.ShowToast -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+
+        launch {
+            cartViewModel.effect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
+                when(effect) {
+                    is CartEffect.ShowToast -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -124,7 +133,7 @@ private fun MobileHomeLayout(
                                 cartIconCoords = it.positionInRoot()
                                 cartViewModel.onIntent(CartIntent.UpdateCartPosition(cartIconCoords))
                             },
-                        onClick = {}
+                        onClick = { navController.navigate(Screen.Cart.route) }
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.NoteAlt,

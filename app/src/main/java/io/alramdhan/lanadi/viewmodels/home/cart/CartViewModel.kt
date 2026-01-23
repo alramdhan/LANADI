@@ -5,10 +5,11 @@ import androidx.lifecycle.viewModelScope
 import io.alramdhan.lanadi.domain.models.CartProduk
 import io.alramdhan.lanadi.domain.usecase.AddToCartUseCase
 import io.alramdhan.lanadi.domain.usecase.GetCartUseCase
+import io.alramdhan.lanadi.domain.usecase.UpdateCartQtyUseCase
 import io.alramdhan.lanadi.ui.home.cart.CartEffect
 import io.alramdhan.lanadi.ui.home.cart.CartIntent
 import io.alramdhan.lanadi.ui.home.cart.CartState
-import io.alramdhan.lanadi.ui.home.produk.FlyingItem
+import io.alramdhan.lanadi.ui.animations.FlyingItem
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,8 @@ import kotlinx.coroutines.launch
 
 class CartViewModel(
     private val getCart: GetCartUseCase,
-    private val addToCart: AddToCartUseCase
+    private val addToCart: AddToCartUseCase,
+    private val updateCartQty: UpdateCartQtyUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CartState())
     val uiState = _uiState.asStateFlow()
@@ -65,8 +67,22 @@ class CartViewModel(
     private fun addItem(item: CartProduk) {
         viewModelScope.launch {
             delay(1000)
-            addToCart(item)
-            _effect.send(CartEffect.ShowToast("Berhasil menambahkan ke cart"))
+            when(checkIfProdukHasAdded(item)) {
+                true -> {
+                    updateCartQty(item.id)
+                    val qtyP = _uiState.value.products.first { it.id == item.id }
+                    _effect.send(CartEffect.ShowToast("${qtyP.quantity} ${item.name}"))
+                }
+                else -> {
+                    addToCart(item)
+                    _effect.send(CartEffect.ShowToast("Berhasil menambahkan ke keranjang"))
+                }
+            }
         }
+    }
+
+    private fun checkIfProdukHasAdded(item: CartProduk): Boolean {
+        val exist = _uiState.value.products.filter { item.id == it.id }
+        return exist.isNotEmpty()
     }
 }

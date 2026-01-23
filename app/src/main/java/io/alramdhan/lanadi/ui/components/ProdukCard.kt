@@ -61,12 +61,10 @@ fun ProductItem(isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (O
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         onClick = { onTapProdukCard(currentOffset, currentSize, painter!!) }
     ) {
-        Column(modifier = Modifier
-            .onGloballyPositioned { img ->
-                currentOffset = img.positionInRoot()
-                currentSize = img.size
-            }
-        ) {
+        Column(modifier = Modifier.onGloballyPositioned {
+            currentOffset = it.positionInRoot()
+            currentSize = it.size
+        }) {
             // Placeholder Gambar
             Box(
                 modifier = Modifier

@@ -14,6 +14,7 @@ import io.alramdhan.lanadi.domain.usecase.GetKategoriUseCase
 import io.alramdhan.lanadi.domain.usecase.GetProdukUseCase
 import io.alramdhan.lanadi.domain.usecase.LoginUseCase
 import io.alramdhan.lanadi.domain.usecase.LogoutUseCase
+import io.alramdhan.lanadi.domain.usecase.UpdateCartQtyUseCase
 import io.alramdhan.lanadi.viewmodels.auth.LoginViewModel
 import io.alramdhan.lanadi.viewmodels.home.HomeViewModel
 import io.alramdhan.lanadi.viewmodels.home.cart.CartViewModel
@@ -43,6 +44,7 @@ val appModule = module {
 
     factory { GetCartUseCase(get()) }
     factory { AddToCartUseCase(get()) }
+    factory { UpdateCartQtyUseCase(get()) }
 
-    viewModel { CartViewModel(get(), get()) }
+    viewModel { CartViewModel(get(), get(), get()) }
 }

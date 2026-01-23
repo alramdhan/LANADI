@@ -17,6 +17,7 @@ import androidx.navigation.createGraph
 import io.alramdhan.lanadi.core.helper.PermissionHelper
 import io.alramdhan.lanadi.ui.auth.LoginScreen
 import io.alramdhan.lanadi.ui.home.MenuTab
+import io.alramdhan.lanadi.ui.home.cart.CartScreen
 import io.alramdhan.lanadi.ui.home.feature.CameraQRScanner
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -67,6 +68,9 @@ fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?, token: String?,
             }
             composable(route = Screen.QRScanner.route) {
                 CameraQRScanner(windowWidthSizeClass, navController)
+            }
+            composable(route = Screen.Cart.route) {
+                CartScreen(windowWidthSizeClass, navController)
             }
         }
         NavHost(

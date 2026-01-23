@@ -22,4 +22,10 @@ class CartRepositoryImpl(private val dao: CartDAO, private val dispatcher: Dispa
             dao.insert(product.toCartEntity())
         }
     }
+
+    override suspend fun updateCartQty(productId: Int) {
+        withContext(dispatcher.io) {
+            dao.updateQty(productId)
+        }
+    }
 }

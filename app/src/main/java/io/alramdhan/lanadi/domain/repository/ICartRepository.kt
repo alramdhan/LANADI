@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface ICartRepository {
     fun getAllCartItems(): Flow<List<CartProduk>>
     suspend fun insertCartItem(product: CartProduk)
+    suspend fun updateCartQty(productId: Int)
 }

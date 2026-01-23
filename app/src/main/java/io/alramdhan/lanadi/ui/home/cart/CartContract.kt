@@ -4,7 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.IntSize
 import io.alramdhan.lanadi.domain.models.CartProduk
-import io.alramdhan.lanadi.ui.home.produk.FlyingItem
+import io.alramdhan.lanadi.ui.animations.FlyingItem
 
 sealed class CartEffect {
     data class ShowToast(val message: String): CartEffect()
