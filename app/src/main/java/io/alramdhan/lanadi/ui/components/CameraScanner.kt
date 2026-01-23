@@ -1,4 +1,4 @@
-package io.alramdhan.lanadi.ui.home.feature
+package io.alramdhan.lanadi.ui.components
 
 import android.util.Log
 import androidx.camera.core.CameraSelector

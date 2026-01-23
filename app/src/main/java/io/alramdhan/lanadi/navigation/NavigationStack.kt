@@ -18,7 +18,7 @@ import io.alramdhan.lanadi.core.helper.PermissionHelper
 import io.alramdhan.lanadi.ui.auth.LoginScreen
 import io.alramdhan.lanadi.ui.home.MenuTab
 import io.alramdhan.lanadi.ui.home.cart.CartScreen
-import io.alramdhan.lanadi.ui.home.feature.CameraQRScanner
+import io.alramdhan.lanadi.ui.components.CameraQRScanner
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable

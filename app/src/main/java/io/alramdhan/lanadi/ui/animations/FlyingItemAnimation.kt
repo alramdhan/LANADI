@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import kotlin.math.roundToInt
@@ -28,8 +27,6 @@ import kotlin.math.roundToInt
 fun FlyingItemAnimationBAK(
     startOffset: Offset,
     endOffset: Offset,
-    startSize: IntSize,
-    targetSize: IntSize,
     painter: Painter? = null,
     onAnimationFinished: () -> Unit,
 ) {
