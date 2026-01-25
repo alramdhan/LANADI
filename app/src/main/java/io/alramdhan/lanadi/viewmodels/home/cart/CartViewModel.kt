@@ -73,7 +73,7 @@ class CartViewModel(
                 true -> {
                     updateCartQty(item.productId, 1)
                     val qtyP = _uiState.value.products.first { it.productId == item.productId }
-                    _effect.send(CartEffect.ShowToast("${qtyP.quantity} ${item.name}"))
+                    _effect.send(CartEffect.ShowToast("${qtyP.quantity + 1} ${item.name}"))
                 }
                 else -> {
                     addToCart(item)

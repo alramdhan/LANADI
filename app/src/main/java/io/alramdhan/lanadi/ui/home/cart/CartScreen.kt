@@ -27,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
@@ -41,12 +42,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import io.alramdhan.lanadi.core.utils.toRupiah
@@ -113,7 +117,7 @@ private fun ContainerListCart(viewModel: CartViewModel, uiState: CartState) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
         contentPadding = PaddingValues(vertical = 20.dp)
     ) {
         when(uiState.isCartLoading) {
@@ -141,13 +145,15 @@ private fun ItemCartTile(isLoading: Boolean, item: CartProduk? = null, onValueCh
                 .height(125.dp)
         ) {
             ListItem(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp)),
+                shadowElevation = 8.dp,
+                tonalElevation = 16.dp,
                 leadingContent = {
                     when (isLoading) {
                         true -> SkeletonPlaceholder(
                             modifier = Modifier.size(100.dp)
                         )
-
                         else -> AsyncImage(
                             model = item!!.imageUrl,
                             contentDescription = "image produk",
@@ -167,7 +173,6 @@ private fun ItemCartTile(isLoading: Boolean, item: CartProduk? = null, onValueCh
                                 SkeletonPlaceholder(Modifier.width(72.dp))
                                 SkeletonPlaceholder(Modifier.fillMaxWidth())
                             }
-
                             else -> {
                                 Text(
                                     item!!.name,
@@ -179,7 +184,12 @@ private fun ItemCartTile(isLoading: Boolean, item: CartProduk? = null, onValueCh
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.tertiary
                                 )
-                                Text(item.deskripsi, overflow = TextOverflow.Ellipsis)
+                                Text(
+                                    item.deskripsi,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontSize = 12.sp,
+                                    lineHeight = 1.5.em
+                                )
                             }
                         }
                     }
@@ -187,7 +197,8 @@ private fun ItemCartTile(isLoading: Boolean, item: CartProduk? = null, onValueCh
                 trailingContent = {
                     NumberStepper(
                         modifier = Modifier
-                            .fillMaxHeight(),
+                            .fillMaxHeight()
+                            .padding(vertical = 8.dp),
                         quantity = if (isLoading) 0 else item!!.quantity,
                         onValueChanged = {
                             if (onValueChanged != null) {
@@ -217,7 +228,10 @@ private fun ContainerButtonAndTotal(total: Double) {
                 .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
-            Text(total.toRupiah())
+            Text(
+                total.toRupiah(),
+                color = Color.White
+            )
         }
     }
 }

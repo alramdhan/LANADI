@@ -67,7 +67,7 @@ private fun StepperIconButton(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier.size(32.dp),
         colors = IconButtonDefaults.filledIconButtonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = if(contentDescription == "tambah") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             disabledContainerColor = Color.LightGray.copy(alpha = 0.5f),
             disabledContentColor = Color.Gray

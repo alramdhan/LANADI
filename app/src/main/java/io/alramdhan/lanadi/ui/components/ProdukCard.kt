@@ -80,14 +80,29 @@ fun ProductItem(isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (O
                             .height(120.dp),
                         roundedShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
                     )
-                    else -> AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(produk!!.image)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = "image kategori ${produk.id}",
-                        contentScale = ContentScale.Crop,
-                    )
+                    else -> {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(produk!!.image)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = "image kategori ${produk.id}",
+                            contentScale = ContentScale.Crop,
+                        )
+                        Box(
+                            Modifier.padding(8.dp)
+                                .background(Color.White, RoundedCornerShape(8.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .align(Alignment.TopEnd)
+                        ) {
+                            Text(
+                                text = produk.harga.toRupiah(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.tertiary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
