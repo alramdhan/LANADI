@@ -50,6 +50,7 @@ class CartViewModel(
                 }
                 addItem(intent.item)
             }
+            is CartIntent.UpdateQty -> updateQty(intent.productId, intent.qty)
             is CartIntent.AnimationFinished -> {
                 _uiState.update { it.copy(flyingItems = it.flyingItems.filter { fi -> fi.id != intent.flyingItemsId }) }
             }
@@ -58,8 +59,9 @@ class CartViewModel(
 
     private fun fetchCart() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isCartLoading = true) }
             getCart().collect { result ->
-                _uiState.update { it.copy(products = result) }
+                _uiState.update { it.copy(isCartLoading = false, products = result) }
             }
         }
     }
@@ -69,8 +71,8 @@ class CartViewModel(
             delay(1000)
             when(checkIfProdukHasAdded(item)) {
                 true -> {
-                    updateCartQty(item.id)
-                    val qtyP = _uiState.value.products.first { it.id == item.id }
+                    updateCartQty(item.productId, 1)
+                    val qtyP = _uiState.value.products.first { it.productId == item.productId }
                     _effect.send(CartEffect.ShowToast("${qtyP.quantity} ${item.name}"))
                 }
                 else -> {
@@ -81,8 +83,14 @@ class CartViewModel(
         }
     }
 
+    private fun updateQty(id: Int, qty: Int) {
+        viewModelScope.launch {
+            updateCartQty(id, qty)
+        }
+    }
+
     private fun checkIfProdukHasAdded(item: CartProduk): Boolean {
-        val exist = _uiState.value.products.filter { item.id == it.id }
+        val exist = _uiState.value.products.filter { item.productId == it.productId }
         return exist.isNotEmpty()
     }
 }

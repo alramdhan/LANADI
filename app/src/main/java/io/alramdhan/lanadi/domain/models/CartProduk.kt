@@ -1,8 +1,9 @@
 package io.alramdhan.lanadi.domain.models
 
 data class CartProduk(
-    val id: Int,
+    val productId: Int,
     val name: String,
+    val deskripsi: String,
     val price: Double,
     val quantity: Int,
     val imageUrl: String?

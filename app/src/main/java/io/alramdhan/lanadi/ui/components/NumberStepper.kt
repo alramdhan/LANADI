@@ -2,7 +2,7 @@ package io.alramdhan.lanadi.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,30 +20,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun NumberStepper(
+    modifier: Modifier = Modifier,
+    quantity: Int = 0,
     onValueChanged: (Int) -> Unit,
     range: IntRange = 0..100,
-    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier.padding(4.dp),
+        modifier = modifier.fillMaxHeight(),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         StepperIconButton(
             icon = Icons.Filled.Add,
             contentDescription = "tambah",
-            onClick = {},
+            onClick = { onValueChanged(1) },
             enabled = true
         )
-        Text("0")
+        Text(
+            "$quantity",
+            fontSize = 14.sp
+        )
         StepperIconButton(
             icon = Icons.Filled.Remove,
             contentDescription = "kurang",
-            onClick = {},
-            enabled = false
+            onClick = {
+                if(quantity > 0) onValueChanged(-1)
+            },
+            enabled = quantity > 0
         )
     }
 }
@@ -61,7 +68,7 @@ private fun StepperIconButton(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier.size(32.dp),
         colors = IconButtonDefaults.filledIconButtonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             disabledContainerColor = Color.LightGray.copy(alpha = 0.5f),
             disabledContentColor = Color.Gray

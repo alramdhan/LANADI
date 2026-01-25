@@ -15,6 +15,6 @@ interface CartDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(item: CartEntity)
 
-    @Query("UPDATE carts SET quantity = quantity + 1 WHERE productId = :productId")
-    fun updateQty(productId: Int)
+    @Query("UPDATE carts SET quantity = quantity + :quantity WHERE productId = :productId")
+    fun updateQty(productId: Int, quantity: Int)
 }

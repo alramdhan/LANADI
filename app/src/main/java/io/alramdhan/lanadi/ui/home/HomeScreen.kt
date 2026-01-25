@@ -157,16 +157,6 @@ private fun MobileHomeLayout(
         cartState.flyingItems.forEach { fi ->
             FlyingItemAnimation(fi) { cartViewModel.onIntent(CartIntent.AnimationFinished(it)) }
         }
-//        if(cartState.isAnimating) {
-//            FlyingItemAnimation(
-//                startOffset = produkState.startCoords,
-//                endOffset = cartIconCoords,
-//                onAnimationFinished = { cartViewModel.onIntent(CartIntent.AnimationFinished) },
-//                startSize = produkState.startSize,
-//                targetSize = cartIconSize,
-//                painter = produkState.image
-//            )
-//        }
     }
 }
 
@@ -238,8 +228,9 @@ private fun ListGridProduk(state: HomeState, cartViewModel: CartViewModel) {
                     ProductItem(produk = produk) { offset, size, painter ->
                         cartViewModel.onIntent(CartIntent.AddItem(
                             item = CartProduk(
-                                id = produk.id,
+                                productId = produk.id,
                                 name = produk.namaProduk,
+                                deskripsi = produk.deskripsi,
                                 price = produk.harga.toDouble(),
                                 quantity = 1,
                                 imageUrl = produk.image
