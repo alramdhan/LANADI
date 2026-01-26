@@ -7,4 +7,5 @@ interface ICartRepository {
     fun getAllCartItems(): Flow<List<CartProduk>>
     suspend fun insertCartItem(product: CartProduk)
     suspend fun updateCartQty(productId: Int, quantity: Int)
+    suspend fun deleteCart(product: CartProduk)
 }

@@ -11,15 +11,15 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface ApiService {
-    @POST(URL.ENDPOINT_LOGIN)
+    @POST(URL.ENDPOINT.LOGIN)
     suspend fun login(@Body request: LoginRequest): BaseResponse<LoginResponse>
 
-    @POST(URL.ENDPOINT_LOGOUT)
+    @POST(URL.ENDPOINT.LOGOUT)
     suspend fun logout(): BaseResponse<Unit>
 
-    @GET(URL.ENDPOINT_GET_KATEGORI)
+    @GET(URL.ENDPOINT.GET_KATEGORI)
     suspend fun getKategori(): BaseResponse<GetKategoriResponse>
 
-    @GET(URL.ENDPOINT_GET_PRODUK)
+    @GET(URL.ENDPOINT.GET_PRODUK)
     suspend fun getProduk(): BaseResponse<GetProdukResponse>
 }

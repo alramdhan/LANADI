@@ -28,4 +28,10 @@ class CartRepositoryImpl(private val dao: CartDAO, private val dispatcher: Dispa
             dao.updateQty(productId, quantity)
         }
     }
+
+    override suspend fun deleteCart(product: CartProduk) {
+        withContext(dispatcher.io) {
+            dao.delete(product.toCartEntity())
+        }
+    }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.alramdhan.lanadi.domain.models.CartProduk
 import io.alramdhan.lanadi.domain.usecase.AddToCartUseCase
+import io.alramdhan.lanadi.domain.usecase.DeleteCartUseCase
 import io.alramdhan.lanadi.domain.usecase.GetCartUseCase
 import io.alramdhan.lanadi.domain.usecase.UpdateCartQtyUseCase
 import io.alramdhan.lanadi.ui.home.cart.CartEffect
@@ -22,6 +23,7 @@ class CartViewModel(
     private val getCart: GetCartUseCase,
     private val addToCart: AddToCartUseCase,
     private val updateCartQty: UpdateCartQtyUseCase,
+    private val deleteCart: DeleteCartUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CartState())
     val uiState = _uiState.asStateFlow()
@@ -51,6 +53,7 @@ class CartViewModel(
                 addItem(intent.item)
             }
             is CartIntent.UpdateQty -> updateQty(intent.productId, intent.qty)
+            is CartIntent.DeleteItem -> deleteItem(intent.item)
             is CartIntent.AnimationFinished -> {
                 _uiState.update { it.copy(flyingItems = it.flyingItems.filter { fi -> fi.id != intent.flyingItemsId }) }
             }
@@ -86,6 +89,13 @@ class CartViewModel(
     private fun updateQty(id: Int, qty: Int) {
         viewModelScope.launch {
             updateCartQty(id, qty)
+        }
+    }
+
+    private fun deleteItem(item: CartProduk) {
+        viewModelScope.launch {
+            deleteCart(item)
+            _effect.send(CartEffect.ShowToast("Produk berhasil dihapus"))
         }
     }
 

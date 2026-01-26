@@ -1,6 +1,7 @@
 package io.alramdhan.lanadi.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -17,4 +18,7 @@ interface CartDAO {
 
     @Query("UPDATE carts SET quantity = quantity + :quantity WHERE productId = :productId")
     fun updateQty(productId: Int, quantity: Int)
+
+    @Delete
+    suspend fun delete(item: CartEntity)
 }

@@ -9,6 +9,7 @@ import io.alramdhan.lanadi.domain.repository.IAuthRepository
 import io.alramdhan.lanadi.domain.repository.ICartRepository
 import io.alramdhan.lanadi.domain.repository.IProdukRepository
 import io.alramdhan.lanadi.domain.usecase.AddToCartUseCase
+import io.alramdhan.lanadi.domain.usecase.DeleteCartUseCase
 import io.alramdhan.lanadi.domain.usecase.GetCartUseCase
 import io.alramdhan.lanadi.domain.usecase.GetKategoriUseCase
 import io.alramdhan.lanadi.domain.usecase.GetProdukUseCase
@@ -45,6 +46,14 @@ val appModule = module {
     factory { GetCartUseCase(get()) }
     factory { AddToCartUseCase(get()) }
     factory { UpdateCartQtyUseCase(get()) }
+    factory { DeleteCartUseCase(get()) }
 
-    viewModel { CartViewModel(get(), get(), get()) }
+    viewModel {
+        CartViewModel(
+            getCart = get(),
+            addToCart =  get(),
+            updateCartQty = get(),
+            deleteCart = get()
+        )
+    }
 }
