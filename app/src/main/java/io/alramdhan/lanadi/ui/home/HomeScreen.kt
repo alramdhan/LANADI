@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -115,10 +115,11 @@ private fun MobileHomeLayout(
     var cartIconCoords by remember { mutableStateOf(Offset.Zero) }
 
     Box(Modifier.fillMaxSize()) {
-        Column(Modifier.padding(horizontal = 16.dp)) {
+        Column {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -168,6 +169,7 @@ private fun TabletHomeLayout(navController: NavController) {
 @Composable
 private fun SearchTextField(state: HomeState, viewModel: HomeViewModel) {
     LanadiTextField(
+        modifier = Modifier.padding(horizontal = 16.dp),
         value = state.searchMenu ?: "",
         onValueChange = { viewModel.onIntent(HomeIntent.SearchTextChanged(it)) },
         label = "Search",
@@ -187,7 +189,8 @@ private fun SearchTextField(state: HomeState, viewModel: HomeViewModel) {
 private fun ListRowKategori(state: HomeState, viewModel: HomeViewModel) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
         when(state.isKategoriLoading) {
             true -> items(5) {
@@ -207,17 +210,17 @@ private fun ListRowKategori(state: HomeState, viewModel: HomeViewModel) {
 
 @Composable
 private fun ListGridProduk(state: HomeState, cartViewModel: CartViewModel) {
-    Column {
+    Column(Modifier.padding(horizontal = 16.dp)) {
         Text("Daftar Menu",
             style = TextStyle(color = Color.Gray)
         )
         Spacer(Modifier.height(4.dp))
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 70.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalItemSpacing = 16.dp
         ) {
             when(state.isProdukLoading) {
                 true -> items(10) {
