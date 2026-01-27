@@ -25,11 +25,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.IntOffset
@@ -56,11 +59,19 @@ fun SwipeToRevealCard(
     val actionButtonSizePx = with(density) { actionButtonSize.toPx() }
     val scope = rememberCoroutineScope()
 
-    val startOffset = 0f
-    val endOffset = with(density) { actionButtonSize.toPx() }
-
     val state = remember {
         AnchoredDraggableState(initialValue = SwipeState.CLOSED)
+    }
+
+    val swipeProgress by remember {
+        derivedStateOf {
+            val offset = try {
+                kotlin.math.abs(state.requireOffset())
+            } catch (e: Exception) {
+                0f
+            }
+            (offset / actionButtonSizePx).coerceIn(0f, 1f)
+        }
     }
 
     SideEffect {
@@ -78,6 +89,10 @@ fun SwipeToRevealCard(
                 .width(actionButtonSize)
                 .height(100.dp)
                 .padding(horizontal = 8.dp)
+                .graphicsLayer {
+                    scaleX = swipeProgress
+                    scaleY = swipeProgress
+                }
                 .background(Danger, RoundedCornerShape(12.dp))
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
