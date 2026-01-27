@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.material.icons.extended)
     implementation(libs.window.size.android)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.foundation)
     implementation(libs.androidx.security.crypto)
     //Camera and scanner QR
     implementation(libs.barcode.scanning)

@@ -45,6 +45,7 @@ enum class SwipeState {
 
 @Composable
 fun SwipeToRevealCard(
+    modifier: Modifier = Modifier,
     onDeleteClick: () -> Unit,
     content: @Composable BoxScope.() -> Unit
 ) {
@@ -71,7 +72,7 @@ fun SwipeToRevealCard(
         )
     }
 
-    Box(Modifier.fillMaxSize()) {
+    Box(modifier.fillMaxSize()) {
         Box(
             modifier = Modifier.align(Alignment.CenterEnd)
                 .width(actionButtonSize)

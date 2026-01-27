@@ -1,6 +1,7 @@
 package io.alramdhan.lanadi.ui.home.cart
 
 import android.widget.Toast
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -93,9 +95,11 @@ fun CartScreen(
                     .padding(paddingValues),
                 verticalArrangement = Arrangement.Center
             ) {
-                Box(Modifier.weight(1f)) {
-                    ContainerListCart(viewModel, state)
-                }
+                ContainerListCart(
+                    modifier = Modifier.weight(1f),
+                    viewModel,
+                    state
+                )
                 ContainerButtonAndTotal(total)
             }
         }
@@ -103,9 +107,9 @@ fun CartScreen(
 }
 
 @Composable
-private fun ContainerListCart(viewModel: CartViewModel, uiState: CartState) {
+private fun ContainerListCart(modifier: Modifier = Modifier, viewModel: CartViewModel, uiState: CartState) {
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -113,12 +117,17 @@ private fun ContainerListCart(viewModel: CartViewModel, uiState: CartState) {
     ) {
         when(uiState.isCartLoading) {
             true -> items(10) {
-                ItemCartTile(true, onDelete = {})
+                ItemCartTile(onDelete = {})
             }
-            else -> items(uiState.products.size) { index ->
-                val item = uiState.products[index]
+            else -> items(
+                items = uiState.products,
+                key = { item -> item.productId }
+            ) { item ->
                 ItemCartTile(
-                    false,
+                    modifier = Modifier.animateItem(
+                        placementSpec = tween(durationMillis = 600)
+                    ),
+                    isLoading = false,
                     item = item,
                     onDelete = {
                         viewModel.onIntent(CartIntent.DeleteItem(item))
@@ -136,12 +145,14 @@ private fun ContainerListCart(viewModel: CartViewModel, uiState: CartState) {
 
 @Composable
 private fun ItemCartTile(
-    isLoading: Boolean,
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = true,
     item: CartProduk? = null,
     onDelete: () -> Unit,
     onValueChanged: ((Int, Int) -> Unit)? = null
 ) {
     SwipeToRevealCard(
+        modifier = modifier,
         onDeleteClick = onDelete
     ) {
         Card(
