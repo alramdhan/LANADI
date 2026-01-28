@@ -17,6 +17,7 @@ sealed class CartIntent {
     data class AddItem(val item: CartProduk, val startPosition: Offset, val startSize: IntSize, val painter: Painter): CartIntent()
     data class UpdateQty(val productId: Int, val qty: Int): CartIntent()
     data class DeleteItem(val item: CartProduk): CartIntent()
+    data object DeleteAllItems: CartIntent()
 
     data class AnimationFinished(val flyingItemsId: Long): CartIntent()
 }

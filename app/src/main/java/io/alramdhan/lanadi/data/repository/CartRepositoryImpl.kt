@@ -34,4 +34,10 @@ class CartRepositoryImpl(private val dao: CartDAO, private val dispatcher: Dispa
             dao.delete(product.toCartEntity())
         }
     }
+
+    override suspend fun deleteAllCarts() {
+        withContext(dispatcher.io) {
+            dao.deleteAllCarts()
+        }
+    }
 }

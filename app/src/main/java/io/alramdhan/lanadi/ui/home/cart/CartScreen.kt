@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,6 +31,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -38,6 +40,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +56,7 @@ import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.ui.components.NumberStepper
 import io.alramdhan.lanadi.ui.components.SkeletonPlaceholder
 import io.alramdhan.lanadi.ui.components.SwipeToRevealCard
+import io.alramdhan.lanadi.ui.theme.Danger
 import io.alramdhan.lanadi.viewmodels.home.cart.CartViewModel
 import io.alramdhan.lanadi.viewmodels.home.checkout.CheckoutViewModel
 import kotlinx.coroutines.launch
@@ -100,6 +104,16 @@ fun CartScreen(
                     .padding(paddingValues),
                 verticalArrangement = Arrangement.Center
             ) {
+                Box(Modifier.fillMaxWidth().align(Alignment.End), contentAlignment = Alignment.CenterEnd) {
+                    TextButton({ viewModel.onIntent(CartIntent.DeleteAllItems) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Danger
+                        )
+                    ) {
+                        Text("Hapus Semua")
+                    }
+                }
                 ContainerListCart(
                     modifier = Modifier.weight(1f),
                     viewModel,
@@ -166,7 +180,8 @@ private fun ItemCartTile(
                 .height(125.dp)
         ) {
             ListItem(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp)),
                 shadowElevation = 8.dp,
                 tonalElevation = 16.dp,

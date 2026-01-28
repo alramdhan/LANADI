@@ -8,4 +8,5 @@ interface ICartRepository {
     suspend fun insertCartItem(product: CartProduk)
     suspend fun updateCartQty(productId: Int, quantity: Int)
     suspend fun deleteCart(product: CartProduk)
+    suspend fun deleteAllCarts()
 }
