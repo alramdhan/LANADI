@@ -200,7 +200,7 @@ fun ProductItem(isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (O
                     }
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "2 tersedia",
+                        "${produk!!.stok} tersedia",
                         style = MaterialTheme.typography.bodySmall
                     )
                     Spacer(Modifier.height(16.dp))

@@ -234,11 +234,15 @@ private fun ContainerButtonAndTotal(total: Double) {
         modifier = Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("Total:")
+        Text(
+            "Total",
+            color = MaterialTheme.colorScheme.onSurface
+        )
         Box(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))

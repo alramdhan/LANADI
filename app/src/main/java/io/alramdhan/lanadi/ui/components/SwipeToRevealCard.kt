@@ -55,7 +55,7 @@ fun SwipeToRevealCard(
     val density = LocalDensity.current
     val size = LocalWindowInfo.current.containerSize
     val screenWidth = size.width
-    val actionButtonSize = (screenWidth * 0.12).dp
+    val actionButtonSize = (screenWidth * 0.1).dp
     val actionButtonSizePx = with(density) { actionButtonSize.toPx() }
     val scope = rememberCoroutineScope()
 
@@ -85,14 +85,14 @@ fun SwipeToRevealCard(
 
     Box(modifier.fillMaxSize()) {
         Box(
-            modifier = Modifier.align(Alignment.CenterEnd)
-                .width(actionButtonSize)
-                .height(100.dp)
-                .padding(horizontal = 8.dp)
-                .graphicsLayer {
+            modifier = Modifier.graphicsLayer {
                     scaleX = swipeProgress
                     scaleY = swipeProgress
                 }
+                .align(Alignment.CenterEnd)
+                .width(actionButtonSize)
+                .height(100.dp)
+                .padding(horizontal = 8.dp)
                 .background(Danger, RoundedCornerShape(12.dp))
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
@@ -107,7 +107,7 @@ fun SwipeToRevealCard(
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Hapus",
-                tint = Color.White
+                tint = Color.White,
             )
         }
 
@@ -116,7 +116,9 @@ fun SwipeToRevealCard(
                 .fillMaxSize()
                 .offset {
                     IntOffset(
-                        x = state.requireOffset().roundToInt(),
+                        x = state
+                            .requireOffset()
+                            .roundToInt(),
                         y = 0
                     )
                 }
