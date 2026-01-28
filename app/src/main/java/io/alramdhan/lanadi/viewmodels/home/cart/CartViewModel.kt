@@ -2,6 +2,7 @@ package io.alramdhan.lanadi.viewmodels.home.cart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.alramdhan.lanadi.core.ui.dialog.DialogManager
 import io.alramdhan.lanadi.domain.models.CartProduk
 import io.alramdhan.lanadi.domain.usecase.AddToCartUseCase
 import io.alramdhan.lanadi.domain.usecase.DeleteAllCartsUseCase
@@ -25,7 +26,8 @@ class CartViewModel(
     private val addToCart: AddToCartUseCase,
     private val updateCartQty: UpdateCartQtyUseCase,
     private val deleteCart: DeleteCartUseCase,
-    private val deleteAllCarts: DeleteAllCartsUseCase
+    private val deleteAllCarts: DeleteAllCartsUseCase,
+    private val dialogManager: DialogManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CartState())
     val uiState = _uiState.asStateFlow()
@@ -61,6 +63,14 @@ class CartViewModel(
                 _uiState.update { it.copy(flyingItems = it.flyingItems.filter { fi -> fi.id != intent.flyingItemsId }) }
             }
         }
+    }
+
+    fun onDeleteItemClicked() {
+        dialogManager.show(
+            "Perhatian",
+            message = "Apakah yakin ingin menghapus semua data?",
+            onConfirm = { onIntent(CartIntent.DeleteAllItems) }
+        )
     }
 
     private fun fetchCart() {

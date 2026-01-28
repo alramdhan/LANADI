@@ -59,7 +59,6 @@ import io.alramdhan.lanadi.ui.components.SwipeToRevealCard
 import io.alramdhan.lanadi.ui.theme.Danger
 import io.alramdhan.lanadi.viewmodels.home.cart.CartViewModel
 import io.alramdhan.lanadi.viewmodels.home.checkout.CheckoutViewModel
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -104,8 +103,13 @@ fun CartScreen(
                     .padding(paddingValues),
                 verticalArrangement = Arrangement.Center
             ) {
-                Box(Modifier.fillMaxWidth().align(Alignment.End), contentAlignment = Alignment.CenterEnd) {
-                    TextButton({ viewModel.onIntent(CartIntent.DeleteAllItems) },
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                        .align(Alignment.End)
+                        .padding(end = 12.dp),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    TextButton({ viewModel.onDeleteItemClicked() },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
                             contentColor = Danger
@@ -132,7 +136,7 @@ private fun ContainerListCart(modifier: Modifier = Modifier, viewModel: CartView
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
-        contentPadding = PaddingValues(vertical = 20.dp)
+        contentPadding = PaddingValues(bottom = 20.dp),
     ) {
         when(uiState.isCartLoading) {
             true -> items(10) {

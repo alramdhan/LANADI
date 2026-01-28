@@ -1,5 +1,7 @@
 package io.alramdhan.lanadi.core.di
 
+import io.alramdhan.lanadi.core.ui.dialog.DialogManager
+import io.alramdhan.lanadi.core.ui.loading.LoadingManager
 import io.alramdhan.lanadi.core.utils.DefaultDispatcherProvider
 import io.alramdhan.lanadi.core.utils.DispatcherProvider
 import io.alramdhan.lanadi.data.repository.AuthRepositoryImpl
@@ -24,10 +26,15 @@ import io.alramdhan.lanadi.viewmodels.home.checkout.CheckoutViewModel
 import io.alramdhan.lanadi.viewmodels.home.setting.SettingViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val appModule = module {
     single<DispatcherProvider> { DefaultDispatcherProvider() }
+
+    singleOf<DialogManager>(::DialogManager)
+    singleOf<LoadingManager>(::LoadingManager)
+
     single<IAuthRepository> {
         AuthRepositoryImpl(get(), get())
     }
@@ -58,7 +65,8 @@ val appModule = module {
             addToCart =  get(),
             updateCartQty = get(),
             deleteCart = get(),
-            deleteAllCarts = get()
+            deleteAllCarts = get(),
+            dialogManager = get()
         )
     }
 

@@ -4,9 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import io.alramdhan.lanadi.core.di.appModule
 import io.alramdhan.lanadi.core.di.databaseModule
 import io.alramdhan.lanadi.core.di.networkModule
@@ -14,6 +17,7 @@ import io.alramdhan.lanadi.data.local.TokenManager
 import io.alramdhan.lanadi.navigation.NavigationStack
 import io.alramdhan.lanadi.ui.theme.LANADITheme
 import io.alramdhan.lanadi.data.local.pref.AuthManager
+import io.alramdhan.lanadi.ui.components.dialogs.GlobalDialogHost
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -41,7 +45,14 @@ class MainActivity : ComponentActivity() {
             }
 
             LANADITheme(dynamicColor = false) {
-                NavigationStack(windowWidthSizeClass = windowSizedClass.widthSizeClass, tokenManager.getToken(), authorized)
+                Box(Modifier.fillMaxSize()) {
+                    NavigationStack(
+                        windowWidthSizeClass = windowSizedClass.widthSizeClass,
+                        tokenManager.getToken(),
+                        authorized
+                    )
+                    GlobalDialogHost()
+                }
             }
         }
     }
