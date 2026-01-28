@@ -1,5 +1,6 @@
 package io.alramdhan.lanadi.ui.components
 
+import io.alramdhan.lanadi.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
@@ -59,7 +61,7 @@ import io.alramdhan.lanadi.domain.models.Produk
 fun ProductItem(isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (Offset, IntSize, Painter) -> Unit) {
     var currentOffset by remember { mutableStateOf(Offset.Zero) }
     var currentSize by remember { mutableStateOf(IntSize.Zero) }
-    val painter = if(produk != null) rememberAsyncImagePainter(model = produk.image) else null
+    val painter = if(produk != null) rememberAsyncImagePainter(model = produk.image) else painterResource(R.drawable.noimage)
 
     Card(
         modifier = Modifier.fillMaxWidth(),

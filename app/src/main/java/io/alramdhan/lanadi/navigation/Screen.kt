@@ -7,4 +7,5 @@ sealed class Screen(val route: String) {
     data object QRScanner: Screen("qr_scanner_screen")
 
     data object Cart: Screen("cart_screen")
+    data object Checkout: Screen("checkout_screen")
 }

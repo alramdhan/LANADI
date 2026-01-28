@@ -19,8 +19,10 @@ import io.alramdhan.lanadi.domain.usecase.UpdateCartQtyUseCase
 import io.alramdhan.lanadi.viewmodels.auth.LoginViewModel
 import io.alramdhan.lanadi.viewmodels.home.HomeViewModel
 import io.alramdhan.lanadi.viewmodels.home.cart.CartViewModel
+import io.alramdhan.lanadi.viewmodels.home.checkout.CheckoutViewModel
 import io.alramdhan.lanadi.viewmodels.home.setting.SettingViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
 val appModule = module {
@@ -56,4 +58,6 @@ val appModule = module {
             deleteCart = get()
         )
     }
+
+    viewModelOf<CheckoutViewModel>(::CheckoutViewModel)
 }

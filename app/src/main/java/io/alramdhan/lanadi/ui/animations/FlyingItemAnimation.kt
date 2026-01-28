@@ -81,13 +81,12 @@ fun FlyingItemAnimationBAK(
 @Composable
 fun FlyingItemAnimation(
     item: FlyingItem,
-    onAnimationFinishid: (Long) -> Unit
+    onAnimationFinishId: (Long) -> Unit
 ) {
     val density = LocalDensity.current
     val startWidth = with(density) { item.startSize.width.toDp() }
     val startHeight = with(density) { item.startSize.height.toDp() }
     val targetSizeDp = 24.dp
-
     val animationProgress = remember { Animatable(0f) }
 
     LaunchedEffect(item) {
@@ -96,7 +95,7 @@ fun FlyingItemAnimation(
             animationSpec = tween(1000, easing = FastOutSlowInEasing)
         )
 
-        onAnimationFinishid(item.id)
+        onAnimationFinishId(item.id)
     }
     val progress = animationProgress.value
     val currentX = item.startPosition.x + (item.targetPosition.x - item.startPosition.x) * progress

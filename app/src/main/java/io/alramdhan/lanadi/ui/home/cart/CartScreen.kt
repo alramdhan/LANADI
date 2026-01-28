@@ -4,7 +4,6 @@ import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,7 +20,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,7 +38,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -49,10 +49,12 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import io.alramdhan.lanadi.core.utils.toRupiah
 import io.alramdhan.lanadi.domain.models.CartProduk
+import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.ui.components.NumberStepper
 import io.alramdhan.lanadi.ui.components.SkeletonPlaceholder
 import io.alramdhan.lanadi.ui.components.SwipeToRevealCard
 import io.alramdhan.lanadi.viewmodels.home.cart.CartViewModel
+import io.alramdhan.lanadi.viewmodels.home.checkout.CheckoutViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -62,19 +64,22 @@ fun CartScreen(
     widthSizeClass: WindowWidthSizeClass?,
     navController: NavController,
     viewModel: CartViewModel = koinViewModel(),
+    sharedVm: CheckoutViewModel,
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsState()
     val total = state.totalPrice
 
-    LaunchedEffect(key1 = true) {
-        launch {
-            viewModel.effect.collect { effect ->
-                when(effect) {
-                    is CartEffect.ShowToast -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                }
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.collect { effect ->
+            when(effect) {
+                is CartEffect.ShowToast -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    LaunchedEffect(state) {
+        sharedVm.updateCartData(state)
     }
 
     Scaffold(
@@ -100,7 +105,7 @@ fun CartScreen(
                     viewModel,
                     state
                 )
-                ContainerButtonAndTotal(total)
+                ContainerButtonAndTotal(navController, total, state.products.size)
             }
         }
     )
@@ -229,7 +234,7 @@ private fun ItemCartTile(
 }
 
 @Composable
-private fun ContainerButtonAndTotal(total: Double) {
+private fun ContainerButtonAndTotal(navController: NavController, total: Double, totalItem: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -239,18 +244,31 @@ private fun ContainerButtonAndTotal(total: Double) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            "Total",
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Box(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-        ) {
+        Column {
+            Text(
+                "Total",
+                color = MaterialTheme.colorScheme.onSurface
+            )
             Text(
                 total.toRupiah(),
-                color = Color.White
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        }
+        ElevatedButton(
+            modifier = Modifier
+                .padding(vertical = 8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.surface
+            ),
+            shape = RoundedCornerShape(12.dp),
+            onClick = { navController.navigate(Screen.Checkout.route) }
+        ) {
+            Text(
+                "Checkout ($totalItem)",
+                fontSize = 16.sp
             )
         }
     }

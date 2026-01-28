@@ -4,14 +4,15 @@ import android.Manifest
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import io.alramdhan.lanadi.core.helper.PermissionHelper
@@ -19,8 +20,10 @@ import io.alramdhan.lanadi.ui.auth.LoginScreen
 import io.alramdhan.lanadi.ui.home.MenuTab
 import io.alramdhan.lanadi.ui.home.cart.CartScreen
 import io.alramdhan.lanadi.ui.components.CameraQRScanner
+import io.alramdhan.lanadi.ui.home.checkout.CheckoutScreen
+import io.alramdhan.lanadi.viewmodels.home.checkout.CheckoutViewModel
+import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?, token: String?, onUnauthorized: Boolean?) {
     val context = LocalContext.current
@@ -69,8 +72,32 @@ fun NavigationStack(windowWidthSizeClass: WindowWidthSizeClass?, token: String?,
             composable(route = Screen.QRScanner.route) {
                 CameraQRScanner(windowWidthSizeClass, navController)
             }
-            composable(route = Screen.Cart.route) {
-                CartScreen(windowWidthSizeClass, navController)
+            navigation(startDestination = Screen.Cart.route, route = "checkout_flow") {
+                composable(route = Screen.Cart.route) { entry ->
+                    val parentEntry = remember(entry) {
+                        navController.getBackStackEntry("checkout_flow")
+                    }
+                    val sharedVm = koinViewModel<CheckoutViewModel>(
+                        viewModelStoreOwner = parentEntry
+                    )
+
+                    CartScreen(
+                        windowWidthSizeClass,
+                        navController,
+                        sharedVm = sharedVm,
+                    )
+                }
+
+                composable(route = Screen.Checkout.route) { entry ->
+                    val parentEntry = remember(entry) {
+                        navController.getBackStackEntry("checkout_flow")
+                    }
+                    val sharedVm = koinViewModel<CheckoutViewModel>(
+                        viewModelStoreOwner = parentEntry
+                    )
+
+                    CheckoutScreen(sharedVm, navController)
+                }
             }
         }
         NavHost(
