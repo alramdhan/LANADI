@@ -58,13 +58,13 @@ import io.alramdhan.lanadi.core.utils.toRupiah
 import io.alramdhan.lanadi.domain.models.Produk
 
 @Composable
-fun ProductItem(isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (Offset, IntSize, Painter) -> Unit) {
+fun ProductItem(modifier: Modifier = Modifier, isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (Offset, IntSize, Painter) -> Unit) {
     var currentOffset by remember { mutableStateOf(Offset.Zero) }
     var currentSize by remember { mutableStateOf(IntSize.Zero) }
     val painter = if(produk != null) rememberAsyncImagePainter(model = produk.image) else painterResource(R.drawable.noimage)
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             disabledContainerColor = Color.Gray,

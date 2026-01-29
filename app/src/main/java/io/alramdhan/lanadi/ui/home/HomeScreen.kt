@@ -1,7 +1,7 @@
 package io.alramdhan.lanadi.ui.home
 
-import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.NoteAlt
 import androidx.compose.material3.Badge
@@ -56,11 +58,11 @@ import io.alramdhan.lanadi.ui.components.ProductItem
 import io.alramdhan.lanadi.ui.home.cart.CartEffect
 import io.alramdhan.lanadi.ui.home.cart.CartIntent
 import io.alramdhan.lanadi.ui.home.cart.CartState
+import io.alramdhan.lanadi.ui.theme.Danger
 import io.alramdhan.lanadi.viewmodels.home.HomeViewModel
 import io.alramdhan.lanadi.viewmodels.home.cart.CartViewModel
 import kotlinx.coroutines.launch
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     widthSizeClass: WindowWidthSizeClass?,
@@ -170,16 +172,18 @@ private fun TabletHomeLayout(navController: NavController) {
 private fun SearchTextField(state: HomeState, viewModel: HomeViewModel) {
     LanadiTextField(
         modifier = Modifier.padding(horizontal = 16.dp),
-        value = state.searchMenu ?: "",
+        value = state.searchText ?: "",
         onValueChange = { viewModel.onIntent(HomeIntent.SearchTextChanged(it)) },
         label = "Search",
         trailingIcon = {
-            IconButton({}) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = "search icon",
-                    tint = MaterialTheme.colorScheme.primary
-                )
+            if(state.searchText != null) {
+                IconButton({ viewModel.onIntent(HomeIntent.ResetSearch) }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "search icon",
+                        tint = Danger
+                    )
+                }
             }
         },
     )
@@ -224,11 +228,13 @@ private fun ListGridProduk(state: HomeState, cartViewModel: CartViewModel) {
         ) {
             when(state.isProdukLoading) {
                 true -> items(10) {
-                    ProductItem(true, null) { _, _, _ -> }
+                    ProductItem(isLoading = true, produk = null) { _, _, _ -> }
                 }
-                else -> items(state.produks.size) { index ->
-                    val produk = state.produks[index]
-                    ProductItem(produk = produk) { offset, size, painter ->
+                else -> items(
+                    items = state.filterProduks.ifEmpty { state.produks },
+                    key = { it.id }
+                ) { produk ->
+                    ProductItem(modifier = Modifier.animateItem(placementSpec = tween(500)), produk = produk) { offset, size, painter ->
                         cartViewModel.onIntent(CartIntent.AddItem(
                             item = CartProduk(
                                 productId = produk.id,

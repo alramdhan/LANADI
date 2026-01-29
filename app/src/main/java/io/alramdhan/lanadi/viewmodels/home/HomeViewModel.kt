@@ -33,8 +33,13 @@ class HomeViewModel(
     fun onIntent(intent: HomeIntent) {
         when(intent) {
             is HomeIntent.LoadDataHome -> fetchDataHome()
-            is HomeIntent.OnSelectKategori -> _uiState.update { it.copy(selectedKategori = intent.id) }
-            is HomeIntent.SearchTextChanged -> _uiState.update { it.copy(searchMenu = intent.text) }
+            is HomeIntent.OnSelectKategori -> {
+                _uiState.update { it.copy(selectedKategori = intent.id) }
+            }
+            is HomeIntent.SearchTextChanged -> filteringItems(query = intent.text)
+            is HomeIntent.ResetSearch -> {
+                _uiState.update { it.copy(filterProduks = emptyList(), searchText = null) }
+            }
         }
     }
 
@@ -46,6 +51,17 @@ class HomeViewModel(
             } catch(e: Exception) {
                 _effect.send(HomeEffect.ShowToastMessage(e.localizedMessage ?: "Terjadi kesalahan"))
             }
+        }
+    }
+
+    private fun filteringItems(query: String) {
+        val filtered = _uiState.value.produks.filter { data -> data.namaProduk.contains(query, ignoreCase = true) }
+
+        _uiState.update {
+            it.copy(
+                filterProduks = filtered,
+                searchText = if(query == "") null else query,
+            )
         }
     }
 

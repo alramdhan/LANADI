@@ -12,6 +12,7 @@ sealed class HomeIntent {
     data class OnSelectKategori(val id: Int): HomeIntent()
 
     data class SearchTextChanged(val text: String): HomeIntent()
+    data object ResetSearch: HomeIntent()
 }
 
 data class HomeState(
@@ -22,7 +23,8 @@ data class HomeState(
 
     val isProdukLoading: Boolean = false,
     val produks: List<Produk> = emptyList(),
+    val filterProduks: List<Produk> = emptyList(),
     val errorProduk: String? = null,
 
-    val searchMenu: String? = null
+    val searchText: String? = null
 )
