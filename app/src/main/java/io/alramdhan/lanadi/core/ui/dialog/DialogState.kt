@@ -7,5 +7,7 @@ data class DialogState(
     val confirmText: String = "Ya",
     val dismissText: String = "Batal",
     val onConfirm: () -> Unit = {},
-    val onDismiss: () -> Unit = {}
+    val onDismiss: () -> Unit = {},
+
+    val isBasicDialog: Boolean = false
 )

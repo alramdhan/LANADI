@@ -48,6 +48,19 @@ fun GlobalDialogHost(
         )
     }
 
+    if(state.isBasicDialog) {
+        AlertDialog(
+            onDismissRequest = { state.onDismiss() },
+            title = { Text("Perhatian") },
+            text = { Text(state.message) },
+            confirmButton = {
+                TextButton(state.onConfirm) {
+                    Text(state.confirmText)
+                }
+            }
+        )
+    }
+
     if(loadingState.isVisible) {
         Dialog(
             onDismissRequest = { state.onDismiss() },

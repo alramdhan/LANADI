@@ -59,6 +59,8 @@ class CartViewModel(
             is CartIntent.UpdateQty -> updateQty(intent.productId, intent.qty)
             is CartIntent.DeleteItem -> deleteItem(intent.item)
             is CartIntent.DeleteAllItems -> deleteAllItems()
+            is CartIntent.OnChangeNamaPelanggan -> _uiState.update { it.copy(namaPelanggan = intent.nama) }
+            is CartIntent.CheckoutClicked -> navigateToCheckout()
             is CartIntent.AnimationFinished -> {
                 _uiState.update { it.copy(flyingItems = it.flyingItems.filter { fi -> fi.id != intent.flyingItemsId }) }
             }
@@ -116,6 +118,16 @@ class CartViewModel(
         viewModelScope.launch {
             deleteAllCarts()
             _effect.send(CartEffect.ShowToast("Semua item dihapus"))
+        }
+    }
+
+    private fun navigateToCheckout() {
+        if(_uiState.value.namaPelanggan.isEmpty()) {
+            dialogManager.basicDialog("Nama pelanggan harus diisi")
+        } else {
+            viewModelScope.launch {
+                _effect.send(CartEffect.NavigateToCheckout)
+            }
         }
     }
 

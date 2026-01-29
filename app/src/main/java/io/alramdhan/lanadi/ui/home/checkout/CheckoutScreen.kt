@@ -39,7 +39,7 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, navController: NavController) {
             modifier = Modifier.padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            Text("name ${state.products[0].name}")
+            Text("name ${state.namaPelanggan}")
         }
     }
 }

@@ -3,6 +3,7 @@ package io.alramdhan.lanadi.ui.home.cart
 import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +20,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -77,13 +80,17 @@ fun CartScreen(
         viewModel.effect.collect { effect ->
             when(effect) {
                 is CartEffect.ShowToast -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                is CartEffect.NavigateToCheckout -> {
+                    sharedVm.updateCartData(state)
+                    navController.navigate(Screen.Checkout.route)
+                }
             }
         }
     }
 
-    LaunchedEffect(state) {
-        sharedVm.updateCartData(state)
-    }
+//    LaunchedEffect(state) {
+//        sharedVm.updateCartData(state)
+//    }
 
     Scaffold(
         topBar = {
@@ -104,11 +111,30 @@ fun CartScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Box(
-                    modifier = Modifier.fillMaxWidth()
-                        .align(Alignment.End)
-                        .padding(end = 12.dp),
-                    contentAlignment = Alignment.CenterEnd
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .border(1.dp, color = Color.Gray, RoundedCornerShape(12.dp)),
                 ) {
+                    Column(Modifier.padding(8.dp)) {
+                        Text("Nama Pelanggan", color = Color.Gray)
+                        BasicTextField(
+                            value = state.namaPelanggan,
+                            onValueChange = { viewModel.onIntent(CartIntent.OnChangeNamaPelanggan(it)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                        )
+                    }
+                }
+                HorizontalDivider()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Daftar item (${state.products.size})")
                     TextButton({ viewModel.onDeleteItemClicked() },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
@@ -123,7 +149,7 @@ fun CartScreen(
                     viewModel,
                     state
                 )
-                ContainerButtonAndTotal(navController, total, state.products.size)
+                ContainerButtonAndTotal(viewModel, total, state.products.size)
             }
         }
     )
@@ -216,7 +242,7 @@ private fun ItemCartTile(
                             else -> {
                                 Text(
                                     item!!.name,
-                                    style = MaterialTheme.typography.titleLarge,
+                                    style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Medium
                                 )
                                 Text(
@@ -253,7 +279,7 @@ private fun ItemCartTile(
 }
 
 @Composable
-private fun ContainerButtonAndTotal(navController: NavController, total: Double, totalItem: Int) {
+private fun ContainerButtonAndTotal(viewModel: CartViewModel, total: Double, totalItem: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -283,7 +309,7 @@ private fun ContainerButtonAndTotal(navController: NavController, total: Double,
                 contentColor = MaterialTheme.colorScheme.surface
             ),
             shape = RoundedCornerShape(12.dp),
-            onClick = { navController.navigate(Screen.Checkout.route) }
+            onClick = { viewModel.onIntent(CartIntent.CheckoutClicked) }
         ) {
             Text(
                 "Checkout ($totalItem)",

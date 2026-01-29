@@ -8,6 +8,7 @@ import io.alramdhan.lanadi.ui.animations.FlyingItem
 
 sealed class CartEffect {
     data class ShowToast(val message: String): CartEffect()
+    data object NavigateToCheckout: CartEffect()
 }
 
 sealed class CartIntent {
@@ -19,6 +20,10 @@ sealed class CartIntent {
     data class DeleteItem(val item: CartProduk): CartIntent()
     data object DeleteAllItems: CartIntent()
 
+    data class OnChangeNamaPelanggan(val nama: String): CartIntent()
+
+    data object CheckoutClicked: CartIntent()
+
     data class AnimationFinished(val flyingItemsId: Long): CartIntent()
 }
 
@@ -27,7 +32,8 @@ data class CartState(
     val products: List<CartProduk> = emptyList(),
     val cartCount: Int = 0,
     val flyingItems: List<FlyingItem> = emptyList(),
-    val cartIconPosition: Offset = Offset.Zero
+    val cartIconPosition: Offset = Offset.Zero,
+    val namaPelanggan: String = "",
 ) {
     val totalPrice: Double
         get() = products.sumOf { it.totalPrice }

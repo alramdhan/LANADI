@@ -1,5 +1,6 @@
 package io.alramdhan.lanadi.ui.components
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,7 +23,10 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun LanadiButton(
     modifier: Modifier,
+    shape: Shape = RoundedCornerShape(12.dp),
+    padding: PaddingValues = ButtonDefaults.ContentPadding,
     onClick: () -> Unit,
+    enabled: Boolean = true,
     colors: ButtonColors = ButtonDefaults.buttonColors(
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary
@@ -31,9 +36,11 @@ fun LanadiButton(
     Button(
         onClick = onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
+        shape = shape,
+        contentPadding = padding,
         colors = colors,
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
+        enabled = enabled,
         content = content
     )
 }

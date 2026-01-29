@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Comment
 import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Badge
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -56,6 +58,8 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import io.alramdhan.lanadi.core.utils.toRupiah
 import io.alramdhan.lanadi.domain.models.Produk
+import io.alramdhan.lanadi.ui.theme.Danger
+import io.alramdhan.lanadi.ui.theme.Success
 
 @Composable
 fun ProductItem(modifier: Modifier = Modifier, isLoading: Boolean = false, produk: Produk?, onTapProdukCard: (Offset, IntSize, Painter) -> Unit) {
@@ -77,7 +81,8 @@ fun ProductItem(modifier: Modifier = Modifier, isLoading: Boolean = false, produ
         Column {
             // Placeholder Gambar
             Box(
-                modifier = Modifier.onGloballyPositioned {
+                modifier = Modifier
+                    .onGloballyPositioned {
                         currentOffset = it.positionInRoot()
                         currentSize = it.size
                     }
@@ -102,20 +107,6 @@ fun ProductItem(modifier: Modifier = Modifier, isLoading: Boolean = false, produ
                             contentDescription = "image kategori ${produk.id}",
                             contentScale = ContentScale.Crop,
                         )
-                        Box(
-                            Modifier
-                                .padding(8.dp)
-                                .background(Color.White, RoundedCornerShape(8.dp))
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                                .align(Alignment.TopEnd)
-                        ) {
-                            Text(
-                                text = produk.harga.toRupiah(),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.tertiary,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
                     }
                 }
             }
@@ -182,6 +173,12 @@ fun ProductItem(modifier: Modifier = Modifier, isLoading: Boolean = false, produ
                             )
                         }
                     }
+                    Text(
+                        text = produk!!.harga.toRupiah(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.SemiBold
+                    )
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = "4.4",
@@ -200,27 +197,45 @@ fun ProductItem(modifier: Modifier = Modifier, isLoading: Boolean = false, produ
                             style = MaterialTheme.typography.bodySmall,
                         )
                     }
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        "${produk!!.stok} tersedia",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Spacer(Modifier.height(16.dp))
-                    LanadiButton(
+                    Spacer(Modifier.height(18.dp))
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = { onTapProdukCard(currentOffset, currentSize, painter!!) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = MaterialTheme.colorScheme.tertiary
-                        ),
-                        content = {
-                            Icon(
-                                Icons.Default.AddShoppingCart,
-                                contentDescription = "ic add cart",
-                                tint = MaterialTheme.colorScheme.tertiary,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Badge(
+                            containerColor = if (produk.stok == 0) Danger else if(produk.stok < 10) {
+                                Color(0xFFEFAB2E).copy(alpha = .6f)
+                            } else Success.copy(alpha = .6f),
+                        ) {
+                            Text(
+                                "${produk.stok} tersedia",
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Medium
                             )
                         }
-                    )
+                        LanadiButton(
+                            modifier = Modifier
+                                .size(40.dp),
+                            shape = CircleShape,
+                            padding = PaddingValues.Zero,
+                            onClick = { onTapProdukCard(currentOffset, currentSize, painter) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.tertiary
+                            ),
+                            enabled = produk.stok > 0,
+                            content = {
+                                Icon(
+                                    Icons.Default.AddShoppingCart,
+                                    contentDescription = "ic add cart",
+                                    tint = MaterialTheme.colorScheme.tertiary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }

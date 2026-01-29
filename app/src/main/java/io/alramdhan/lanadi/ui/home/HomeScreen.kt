@@ -88,6 +88,7 @@ fun HomeScreen(
             cartViewModel.effect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
                 when(effect) {
                     is CartEffect.ShowToast -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                    is CartEffect.NavigateToCheckout -> {}
                 }
             }
         }
