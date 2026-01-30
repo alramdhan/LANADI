@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.alramdhan.lanadi.ui.theme.Danger
@@ -53,9 +52,7 @@ fun SwipeToRevealCard(
     content: @Composable BoxScope.() -> Unit
 ) {
     val density = LocalDensity.current
-    val size = LocalWindowInfo.current.containerSize
-    val screenWidth = size.width
-    val actionButtonSize = (screenWidth * 0.075).dp
+    val actionButtonSize = 100.dp
     val actionButtonSizePx = with(density) { actionButtonSize.toPx() }
     val scope = rememberCoroutineScope()
 
@@ -90,7 +87,7 @@ fun SwipeToRevealCard(
                     scaleY = swipeProgress
                 }
                 .align(Alignment.CenterEnd)
-                .width(actionButtonSize)
+                .width(100.dp)
                 .height(100.dp)
                 .padding(horizontal = 8.dp)
                 .background(Danger, RoundedCornerShape(12.dp))
