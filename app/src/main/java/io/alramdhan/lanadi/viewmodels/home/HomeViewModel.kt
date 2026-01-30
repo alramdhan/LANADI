@@ -2,6 +2,7 @@ package io.alramdhan.lanadi.viewmodels.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.alramdhan.lanadi.core.ui.UiState
 import io.alramdhan.lanadi.domain.usecase.GetKategoriUseCase
 import io.alramdhan.lanadi.domain.usecase.GetProdukUseCase
 import io.alramdhan.lanadi.ui.home.HomeEffect
@@ -33,13 +34,9 @@ class HomeViewModel(
     fun onIntent(intent: HomeIntent) {
         when(intent) {
             is HomeIntent.LoadDataHome -> fetchDataHome()
-            is HomeIntent.OnSelectKategori -> {
-                _uiState.update { it.copy(selectedKategori = intent.id) }
-            }
-            is HomeIntent.SearchTextChanged -> filteringItems(query = intent.text)
-            is HomeIntent.ResetSearch -> {
-                _uiState.update { it.copy(filterProduks = emptyList(), searchText = null) }
-            }
+            is HomeIntent.OnSelectKategori -> _uiState.update { it.copy(selectedKategori = intent.id) }
+            is HomeIntent.SearchTextChanged -> _uiState.update { it.copy(searchText = if(intent.text == "") null else intent.text) }
+            is HomeIntent.ResetSearch -> _uiState.update { it.copy(searchText = null) }
         }
     }
 
@@ -54,26 +51,15 @@ class HomeViewModel(
         }
     }
 
-    private fun filteringItems(query: String) {
-        val filtered = _uiState.value.produks.filter { data -> data.namaProduk.contains(query, ignoreCase = true) }
-
-        _uiState.update {
-            it.copy(
-                filterProduks = filtered,
-                searchText = if(query == "") null else query,
-            )
-        }
-    }
-
     private fun fetchKategori() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isKategoriLoading = true) }
+            _uiState.update { it.copy(kategoris = UiState.Loading) }
             delay(500)
             getKategoriUseCase().collect { result ->
                 result.onSuccess { response ->
-                    _uiState.update { it.copy(isKategoriLoading = false, kategoris = response, selectedKategori = response[0].id) }
+                    _uiState.update { it.copy(kategoris = UiState.Success(response), selectedKategori = response[0].id) }
                 }.onFailure { response ->
-                    _uiState.update { it.copy(isKategoriLoading = false, errorKategori = response.localizedMessage) }
+                    _uiState.update { it.copy(kategoris = UiState.Error(response.localizedMessage!!)) }
                     _effect.send(HomeEffect.ShowToastMessage(response.localizedMessage ?: "Terjadi kesalahan"))
                 }
             }
@@ -82,13 +68,13 @@ class HomeViewModel(
 
     private fun fetchProduk() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isProdukLoading = true) }
+            _uiState.update { it.copy(produks = UiState.Loading) }
             delay(1000)
             getProdukUseCase().collect { result ->
                 result.onSuccess { data ->
-                    _uiState.update { it.copy(isProdukLoading = false, produks = data) }
+                    _uiState.update { it.copy(produks = UiState.Success(data)) }
                 }.onFailure { msg ->
-                    _uiState.update { it.copy(isProdukLoading = false, errorProduk = msg.localizedMessage) }
+                    _uiState.update { it.copy(produks = UiState.Error(msg.message!!)) }
                     _effect.send(HomeEffect.ShowToastMessage(msg.localizedMessage!!))
                 }
             }

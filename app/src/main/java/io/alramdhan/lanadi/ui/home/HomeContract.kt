@@ -1,5 +1,6 @@
 package io.alramdhan.lanadi.ui.home
 
+import io.alramdhan.lanadi.core.ui.UiState
 import io.alramdhan.lanadi.domain.models.Kategori
 import io.alramdhan.lanadi.domain.models.Produk
 
@@ -16,15 +17,10 @@ sealed class HomeIntent {
 }
 
 data class HomeState(
-    val isKategoriLoading: Boolean = false,
-    val kategoris: List<Kategori> = emptyList(),
+    val kategoris: UiState<List<Kategori>> = UiState.Idle,
     val selectedKategori: Int = 0,
-    val errorKategori: String? = null,
 
-    val isProdukLoading: Boolean = false,
-    val produks: List<Produk> = emptyList(),
-    val filterProduks: List<Produk> = emptyList(),
-    val errorProduk: String? = null,
+    val produks: UiState<List<Produk>> = UiState.Idle,
 
     val searchText: String? = null
 )

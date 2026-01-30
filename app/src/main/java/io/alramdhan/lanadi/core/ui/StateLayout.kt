@@ -1,6 +1,7 @@
 package io.alramdhan.lanadi.core.ui
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -26,14 +27,12 @@ fun <T> StateLayout(
     emptyContent: @Composable () -> Unit = { DefaultEmptyView() },
     content: @Composable (T) -> Unit
 ) {
-    Box(modifier.fillMaxSize()) {
-        Crossfade(targetState = state, label = "State Animation") { target ->
+    Box(modifier) {
+        Crossfade(targetState = state, label = "State Animation", animationSpec = tween(500)) { target ->
             when(target) {
                 is UiState.Idle -> {}
                 is UiState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        loadingContent()
-                    }
+                    loadingContent()
                 }
                 is UiState.Error -> {
                     errorContent(target.message)

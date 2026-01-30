@@ -14,13 +14,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.NoteAlt
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Icon
@@ -31,6 +31,7 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,9 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
 import io.alramdhan.lanadi.core.constants.AppString
+import io.alramdhan.lanadi.core.ui.DefaultEmptyView
+import io.alramdhan.lanadi.core.ui.StateLayout
+import io.alramdhan.lanadi.core.ui.UiState
 import io.alramdhan.lanadi.domain.models.CartProduk
 import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.ui.animations.FlyingItemAnimation
@@ -176,6 +180,7 @@ private fun SearchTextField(state: HomeState, viewModel: HomeViewModel) {
         value = state.searchText ?: "",
         onValueChange = { viewModel.onIntent(HomeIntent.SearchTextChanged(it)) },
         label = "Search",
+        enabled = state.produks is UiState.Success,
         trailingIcon = {
             if(state.searchText != null) {
                 IconButton({ viewModel.onIntent(HomeIntent.ResetSearch) }) {
@@ -192,21 +197,38 @@ private fun SearchTextField(state: HomeState, viewModel: HomeViewModel) {
 
 @Composable
 private fun ListRowKategori(state: HomeState, viewModel: HomeViewModel) {
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp)
-    ) {
-        when(state.isKategoriLoading) {
-            true -> items(5) {
-                KategoriItem(true, null, false) {}
+    StateLayout(
+        state = state.kategoris,
+        loadingContent = {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
+            ) {
+                items(5) {
+                    KategoriItem(true, null, false) {}
+                }
             }
-            else -> items(state.kategoris.size) {
-                val kategori = state.kategoris[it]
+        }
+    ) { kategoris ->
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
+        ) {
+            items(
+                items = kategoris
+            ) { kategori ->
                 KategoriItem(
                     kategori = kategori,
                     selected = state.selectedKategori == kategori.id,
-                    onKategoriSelected = { viewModel.onIntent(HomeIntent.OnSelectKategori(kategori.id)) }
+                    onKategoriSelected = {
+                        viewModel.onIntent(
+                            HomeIntent.OnSelectKategori(
+                                kategori.id
+                            )
+                        )
+                    }
                 )
             }
         }
@@ -220,37 +242,64 @@ private fun ListGridProduk(state: HomeState, cartViewModel: CartViewModel) {
             style = TextStyle(color = Color.Gray)
         )
         Spacer(Modifier.height(4.dp))
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Fixed(2),
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 70.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalItemSpacing = 16.dp
-        ) {
-            when(state.isProdukLoading) {
-                true -> items(10) {
-                    ProductItem(isLoading = true, produk = null) { _, _, _ -> }
-                }
-                else -> items(
-                    items = state.filterProduks.ifEmpty { state.produks },
-                    key = { it.id }
-                ) { produk ->
-                    ProductItem(modifier = Modifier.animateItem(placementSpec = tween(500)), produk = produk) { offset, size, painter ->
-                        cartViewModel.onIntent(CartIntent.AddItem(
-                            item = CartProduk(
-                                productId = produk.id,
-                                name = produk.namaProduk,
-                                deskripsi = produk.deskripsi,
-                                price = produk.harga.toDouble(),
-                                quantity = 1,
-                                imageUrl = produk.image
-                            ),
-                            startPosition = offset,
-                            startSize = size,
-                            painter = painter
-                        ))
+        StateLayout(
+            state = state.produks,
+            loadingContent = {
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Fixed(2),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 70.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalItemSpacing = 16.dp
+                ) {
+                    items(10) {
+                        ProductItem(isLoading = true, produk = null) { _, _, _ -> }
                     }
                 }
+            }
+        ) { produks ->
+            val filtered by remember(produks, state.searchText) {
+                derivedStateOf {
+                    produks.filter { it.namaProduk.contains(state.searchText ?: "", ignoreCase = true) }
+                }
+            }
+
+            if(filtered.isNotEmpty()) {
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Fixed(2),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 70.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalItemSpacing = 16.dp
+                ) {
+                    items(
+                        items = filtered,
+                        key = { it.id }
+                    ) { produk ->
+                        ProductItem(
+                            modifier = Modifier.animateItem(placementSpec = tween(500)),
+                            produk = produk
+                        ) { offset, size, painter ->
+                            cartViewModel.onIntent(
+                                CartIntent.AddItem(
+                                    item = CartProduk(
+                                        productId = produk.id,
+                                        name = produk.namaProduk,
+                                        deskripsi = produk.deskripsi,
+                                        price = produk.harga.toDouble(),
+                                        quantity = 1,
+                                        imageUrl = produk.image
+                                    ),
+                                    startPosition = offset,
+                                    startSize = size,
+                                    painter = painter
+                                )
+                            )
+                        }
+                    }
+                }
+            } else {
+                DefaultEmptyView()
             }
         }
     }
