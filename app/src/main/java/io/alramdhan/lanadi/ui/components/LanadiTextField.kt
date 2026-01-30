@@ -25,6 +25,7 @@ fun LanadiTextField(
     isObscure: Boolean = false,
     isError: Boolean = false,
     errorMessage: String? = null,
+    enabled: Boolean = true,
     supportingText: String = "",
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null
@@ -43,6 +44,7 @@ fun LanadiTextField(
                 Text(errorMessage ?: supportingText)
             }
         },
+        enabled = enabled,
         visualTransformation = if(isObscure) PasswordVisualTransformation() else VisualTransformation.None,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
