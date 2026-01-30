@@ -57,7 +57,7 @@ class HomeViewModel(
             delay(500)
             getKategoriUseCase().collect { result ->
                 result.onSuccess { response ->
-                    _uiState.update { it.copy(kategoris = UiState.Success(response), selectedKategori = response[0].id) }
+                    _uiState.update { it.copy(kategoris = UiState.Success(response)) }
                 }.onFailure { response ->
                     _uiState.update { it.copy(kategoris = UiState.Error(response.localizedMessage!!)) }
                     _effect.send(HomeEffect.ShowToastMessage(response.localizedMessage ?: "Terjadi kesalahan"))

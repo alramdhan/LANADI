@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -50,7 +51,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -91,10 +91,6 @@ fun CartScreen(
         }
     }
 
-//    LaunchedEffect(state) {
-//        sharedVm.updateCartData(state)
-//    }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -131,7 +127,7 @@ fun CartScreen(
                             onValueChange = { viewModel.onIntent(CartIntent.OnChangeNamaPelanggan(it)) },
                             modifier = Modifier.fillMaxWidth(),
                             textStyle = TextStyle(
-                                fontSize = 14.sp,
+                                fontSize = 18.sp,
                             ),
                             singleLine = true,
                         )
@@ -168,7 +164,12 @@ fun CartScreen(
                     viewModel,
                     state
                 )
-                ContainerButtonAndTotal(viewModel, total, state.products.size)
+                ContainerButtonAndTotal(
+                    state.checkoutProcess,
+                    total,
+                    state.products.size,
+                    onCheckoutClicked = { viewModel.onIntent(CartIntent.CheckoutClicked) }
+                )
             }
         }
     )
@@ -298,7 +299,12 @@ private fun ItemCartTile(
 }
 
 @Composable
-private fun ContainerButtonAndTotal(viewModel: CartViewModel, total: Double, totalItem: Int) {
+private fun ContainerButtonAndTotal(
+    process: Boolean = false,
+    total: Double,
+    totalItem: Int,
+    onCheckoutClicked: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -322,6 +328,7 @@ private fun ContainerButtonAndTotal(viewModel: CartViewModel, total: Double, tot
         }
         ElevatedButton(
             modifier = Modifier
+                .width(150.dp)
                 .padding(vertical = 8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -329,12 +336,16 @@ private fun ContainerButtonAndTotal(viewModel: CartViewModel, total: Double, tot
             ),
             shape = RoundedCornerShape(12.dp),
             enabled = totalItem > 0,
-            onClick = { viewModel.onIntent(CartIntent.CheckoutClicked) }
+            onClick = onCheckoutClicked
         ) {
-            Text(
-                "Checkout ($totalItem)",
-                fontSize = 16.sp
-            )
+            if(process) {
+                CircularProgressIndicator(Modifier.size(24.dp), trackColor = Color.White)
+            } else {
+                Text(
+                    "Checkout ($totalItem)",
+                    fontSize = 16.sp
+                )
+            }
         }
     }
 }

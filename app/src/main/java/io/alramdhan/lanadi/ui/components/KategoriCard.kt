@@ -1,5 +1,7 @@
 package io.alramdhan.lanadi.ui.components
 
+import io.alramdhan.lanadi.R
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,9 +32,16 @@ import coil.request.ImageRequest
 import io.alramdhan.lanadi.domain.models.Kategori
 
 @Composable
-fun KategoriItem(isLoading: Boolean = false, kategori: Kategori? = null, selected: Boolean = false, onKategoriSelected: () -> Unit) {
+fun KategoriItem(
+    isLoading: Boolean = false,
+    kategori: Kategori? = null,
+    selected: Boolean = false,
+    firstIndexed: Boolean = false,
+    onKategoriSelected: () -> Unit
+) {
     Card(
         modifier = Modifier
+            .padding(end = if(firstIndexed) 16.dp else 0.dp)
             .width(100.dp)
             .height(125.dp),
         colors = CardColors(
@@ -63,14 +73,20 @@ fun KategoriItem(isLoading: Boolean = false, kategori: Kategori? = null, selecte
                             .height(88.dp),
                         roundedShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
                     )
-                    else -> AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(kategori!!.image)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = "image kategori ${kategori.id}",
-                        contentScale = ContentScale.Crop
-                    )
+                    else -> {
+                        if(firstIndexed) {
+                            Image(painterResource(R.drawable.noimage), contentDescription = "image semua kategori")
+                        } else {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(kategori!!.image)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = "image kategori ${kategori.id}",
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
                 }
             }
             Box(
@@ -81,7 +97,7 @@ fun KategoriItem(isLoading: Boolean = false, kategori: Kategori? = null, selecte
                 when(isLoading) {
                     true ->  SkeletonPlaceholder(modifier = Modifier.width(60.dp))
                     else -> Text(
-                        text = kategori!!.name,
+                        text = kategori?.name ?: "Semua",
                         style = MaterialTheme.typography.bodySmall,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold

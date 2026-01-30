@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -53,6 +54,7 @@ import io.alramdhan.lanadi.core.ui.DefaultEmptyView
 import io.alramdhan.lanadi.core.ui.StateLayout
 import io.alramdhan.lanadi.core.ui.UiState
 import io.alramdhan.lanadi.domain.models.CartProduk
+import io.alramdhan.lanadi.domain.models.Kategori
 import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.ui.animations.FlyingItemAnimation
 import io.alramdhan.lanadi.ui.theme.Typography
@@ -216,9 +218,17 @@ private fun ListRowKategori(state: HomeState, viewModel: HomeViewModel) {
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
-            items(
+            itemsIndexed(
                 items = kategoris
-            ) { kategori ->
+            ) { index, kategori ->
+                if(index == 0) {
+                    KategoriItem(
+                        firstIndexed = true,
+                        selected = state.selectedKategori == 0
+                    ) {
+                        viewModel.onIntent(HomeIntent.OnSelectKategori(0))
+                    }
+                }
                 KategoriItem(
                     kategori = kategori,
                     selected = state.selectedKategori == kategori.id,

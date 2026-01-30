@@ -125,7 +125,7 @@ class CartViewModel(
         if(_uiState.value.namaPelanggan.isEmpty()) {
             _uiState.update { it.copy(errorNamaPelanggan = "Nama Pelanggan harus diisi") }
         } else {
-            _uiState.update { it.copy(errorNamaPelanggan = null) }
+            _uiState.update { it.copy(errorNamaPelanggan = null, checkoutProcess = true) }
             viewModelScope.launch {
                 delay(500)
                 _effect.send(CartEffect.NavigateToCheckout)
