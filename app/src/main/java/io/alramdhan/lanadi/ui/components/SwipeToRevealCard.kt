@@ -55,7 +55,7 @@ fun SwipeToRevealCard(
     val density = LocalDensity.current
     val size = LocalWindowInfo.current.containerSize
     val screenWidth = size.width
-    val actionButtonSize = (screenWidth * 0.1).dp
+    val actionButtonSize = (screenWidth * 0.075).dp
     val actionButtonSizePx = with(density) { actionButtonSize.toPx() }
     val scope = rememberCoroutineScope()
 

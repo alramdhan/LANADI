@@ -34,6 +34,7 @@ data class CartState(
     val flyingItems: List<FlyingItem> = emptyList(),
     val cartIconPosition: Offset = Offset.Zero,
     val namaPelanggan: String = "",
+    val errorNamaPelanggan: String? = null
 ) {
     val totalPrice: Double
         get() = products.sumOf { it.totalPrice }

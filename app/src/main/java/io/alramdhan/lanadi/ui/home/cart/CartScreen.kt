@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,8 +47,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -114,16 +117,30 @@ fun CartScreen(
                     Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
-                        .border(1.dp, color = Color.Gray, RoundedCornerShape(12.dp)),
+                        .border(
+                            1.dp,
+                            color = if (!state.errorNamaPelanggan.isNullOrEmpty()) Danger else Color.Gray,
+                            RoundedCornerShape(12.dp)
+                        ),
                 ) {
                     Column(Modifier.padding(8.dp)) {
                         Text("Nama Pelanggan", color = Color.Gray)
+                        Spacer(Modifier.height(6.dp))
                         BasicTextField(
                             value = state.namaPelanggan,
                             onValueChange = { viewModel.onIntent(CartIntent.OnChangeNamaPelanggan(it)) },
                             modifier = Modifier.fillMaxWidth(),
+                            textStyle = TextStyle(
+                                fontSize = 14.sp,
+                            ),
                             singleLine = true,
                         )
+                        if(!state.errorNamaPelanggan.isNullOrEmpty()) {
+                            Text(state.errorNamaPelanggan!!,
+                                color = Danger,
+                                fontSize = 12.sp
+                            )
+                        }
                     }
                 }
                 HorizontalDivider()
@@ -138,8 +155,10 @@ fun CartScreen(
                     TextButton({ viewModel.onDeleteItemClicked() },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
-                            contentColor = Danger
-                        )
+                            contentColor = Danger,
+                            disabledContainerColor = Color.Transparent
+                        ),
+                        enabled = state.products.isNotEmpty()
                     ) {
                         Text("Hapus Semua")
                     }
@@ -309,6 +328,7 @@ private fun ContainerButtonAndTotal(viewModel: CartViewModel, total: Double, tot
                 contentColor = MaterialTheme.colorScheme.surface
             ),
             shape = RoundedCornerShape(12.dp),
+            enabled = totalItem > 0,
             onClick = { viewModel.onIntent(CartIntent.CheckoutClicked) }
         ) {
             Text(
