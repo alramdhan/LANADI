@@ -1,7 +1,7 @@
 package io.alramdhan.lanadi.ui.animations
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.EaseInBack
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -35,7 +35,7 @@ fun FlyingItemAnimationBAK(
     LaunchedEffect(Unit) {
         animProgress.animateTo(
             targetValue = 1f,
-            animationSpec = tween(3000, easing = FastOutSlowInEasing)
+            animationSpec = tween(3000, easing = EaseInBack)
         )
         onAnimationFinished()
     }
@@ -92,7 +92,7 @@ fun FlyingItemAnimation(
     LaunchedEffect(item) {
         animationProgress.animateTo(
             targetValue = 1f,
-            animationSpec = tween(1000, easing = FastOutSlowInEasing)
+            animationSpec = tween(2000, easing = EaseInBack)
         )
 
         onAnimationFinishId(item.id)
