@@ -92,7 +92,7 @@ fun FlyingItemAnimation(
     LaunchedEffect(item) {
         animationProgress.animateTo(
             targetValue = 1f,
-            animationSpec = tween(2000, easing = EaseInBack)
+            animationSpec = tween(1000, easing = EaseInBack)
         )
 
         onAnimationFinishId(item.id)

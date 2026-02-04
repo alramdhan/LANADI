@@ -128,6 +128,7 @@ class CartViewModel(
             _uiState.update { it.copy(errorNamaPelanggan = null, checkoutProcess = true) }
             viewModelScope.launch {
                 delay(500)
+                _uiState.update { it.copy(checkoutProcess = false) }
                 _effect.send(CartEffect.NavigateToCheckout)
             }
         }
