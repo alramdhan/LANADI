@@ -21,7 +21,7 @@ import io.alramdhan.lanadi.viewmodels.home.checkout.CheckoutViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckoutScreen(viewModel: CheckoutViewModel, navController: NavController) {
-    val state by viewModel.cartState.collectAsState()
+    val state by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {

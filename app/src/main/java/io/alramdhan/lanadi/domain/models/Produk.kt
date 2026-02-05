@@ -1,5 +1,8 @@
 package io.alramdhan.lanadi.domain.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Produk(
     val id: Int,
     val kategoriId: Int,

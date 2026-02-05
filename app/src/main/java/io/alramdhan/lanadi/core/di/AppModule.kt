@@ -6,9 +6,11 @@ import io.alramdhan.lanadi.core.utils.DefaultDispatcherProvider
 import io.alramdhan.lanadi.core.utils.DispatcherProvider
 import io.alramdhan.lanadi.data.repository.AuthRepositoryImpl
 import io.alramdhan.lanadi.data.repository.CartRepositoryImpl
+import io.alramdhan.lanadi.data.repository.OrderRepositoryImpl
 import io.alramdhan.lanadi.data.repository.ProdukRepositoryImpl
 import io.alramdhan.lanadi.domain.repository.IAuthRepository
 import io.alramdhan.lanadi.domain.repository.ICartRepository
+import io.alramdhan.lanadi.domain.repository.IOrderRepository
 import io.alramdhan.lanadi.domain.repository.IProdukRepository
 import io.alramdhan.lanadi.domain.usecase.AddToCartUseCase
 import io.alramdhan.lanadi.domain.usecase.DeleteAllCartsUseCase
@@ -18,6 +20,7 @@ import io.alramdhan.lanadi.domain.usecase.GetKategoriUseCase
 import io.alramdhan.lanadi.domain.usecase.GetProdukUseCase
 import io.alramdhan.lanadi.domain.usecase.LoginUseCase
 import io.alramdhan.lanadi.domain.usecase.LogoutUseCase
+import io.alramdhan.lanadi.domain.usecase.MakeAnOrderUseCase
 import io.alramdhan.lanadi.domain.usecase.UpdateCartQtyUseCase
 import io.alramdhan.lanadi.viewmodels.auth.LoginViewModel
 import io.alramdhan.lanadi.viewmodels.home.HomeViewModel
@@ -71,4 +74,7 @@ val appModule = module {
     }
 
     viewModelOf<CheckoutViewModel>(::CheckoutViewModel)
+
+    single<IOrderRepository> { OrderRepositoryImpl(get()) }
+    factory { MakeAnOrderUseCase(get()) }
 }

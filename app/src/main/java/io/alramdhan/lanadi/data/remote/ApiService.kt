@@ -5,7 +5,9 @@ import io.alramdhan.lanadi.data.remote.dto.BaseResponse
 import io.alramdhan.lanadi.data.remote.dto.response.GetKategoriResponse
 import io.alramdhan.lanadi.data.remote.dto.response.GetProdukResponse
 import io.alramdhan.lanadi.data.remote.dto.request.LoginRequest
+import io.alramdhan.lanadi.data.remote.dto.request.OrderStoreRequest
 import io.alramdhan.lanadi.data.remote.dto.response.LoginResponse
+import io.alramdhan.lanadi.data.remote.dto.response.OrderResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -22,4 +24,7 @@ interface ApiService {
 
     @GET(URL.ENDPOINT.GET_PRODUK)
     suspend fun getProduk(): BaseResponse<GetProdukResponse>
+
+    @POST(URL.ENDPOINT.POST_PESANAN)
+    suspend fun makeAnOrder(@Body request: OrderStoreRequest): BaseResponse<OrderResponse>
 }
