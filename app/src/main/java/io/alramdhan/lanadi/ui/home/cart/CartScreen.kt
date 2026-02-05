@@ -58,7 +58,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import io.alramdhan.lanadi.core.utils.toRupiah
 import io.alramdhan.lanadi.domain.models.CartProduk
-import io.alramdhan.lanadi.navigation.Screen
 import io.alramdhan.lanadi.ui.components.NumberStepper
 import io.alramdhan.lanadi.ui.components.SkeletonPlaceholder
 import io.alramdhan.lanadi.ui.components.SwipeToRevealCard
