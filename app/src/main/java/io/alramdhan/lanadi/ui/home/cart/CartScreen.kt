@@ -85,7 +85,8 @@ fun CartScreen(
                 is CartEffect.ShowToast -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 is CartEffect.NavigateToCheckout -> {
                     sharedVm.updateCartData(state)
-                    navController.navigate(Screen.Checkout.route)
+                    viewModel.onIntent(CartIntent.OpenModalCheckout(sharedVm, navController))
+//                    navController.navigate(Screen.Checkout.route)
                 }
             }
         }

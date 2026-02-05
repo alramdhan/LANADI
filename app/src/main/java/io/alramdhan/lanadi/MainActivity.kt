@@ -17,6 +17,7 @@ import io.alramdhan.lanadi.data.local.TokenManager
 import io.alramdhan.lanadi.navigation.NavigationStack
 import io.alramdhan.lanadi.ui.theme.LANADITheme
 import io.alramdhan.lanadi.data.local.pref.AuthManager
+import io.alramdhan.lanadi.ui.components.GlobalBottomSheetWrapper
 import io.alramdhan.lanadi.ui.components.dialogs.GlobalDialogHost
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.android.ext.koin.androidContext
@@ -52,6 +53,7 @@ class MainActivity : ComponentActivity() {
                         authorized
                     )
                     GlobalDialogHost()
+                    GlobalBottomSheetWrapper()
                 }
             }
         }

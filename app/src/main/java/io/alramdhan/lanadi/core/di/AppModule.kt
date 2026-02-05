@@ -2,6 +2,8 @@ package io.alramdhan.lanadi.core.di
 
 import io.alramdhan.lanadi.core.ui.dialog.DialogManager
 import io.alramdhan.lanadi.core.ui.loading.LoadingManager
+import io.alramdhan.lanadi.core.ui.sheet.SheetManager
+import io.alramdhan.lanadi.core.ui.sheet.SheetManagerImpl
 import io.alramdhan.lanadi.core.utils.DefaultDispatcherProvider
 import io.alramdhan.lanadi.core.utils.DispatcherProvider
 import io.alramdhan.lanadi.data.repository.AuthRepositoryImpl
@@ -37,6 +39,7 @@ val appModule = module {
 
     singleOf<DialogManager>(::DialogManager)
     singleOf<LoadingManager>(::LoadingManager)
+    singleOf<SheetManager>(::SheetManagerImpl)
 
     single<IAuthRepository> {
         AuthRepositoryImpl(get(), get())
@@ -69,7 +72,8 @@ val appModule = module {
             updateCartQty = get(),
             deleteCart = get(),
             deleteAllCarts = get(),
-            dialogManager = get()
+            dialogManager = get(),
+            sheetManager = get()
         )
     }
 

@@ -2,7 +2,9 @@ package io.alramdhan.lanadi.viewmodels.home.cart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import io.alramdhan.lanadi.core.ui.dialog.DialogManager
+import io.alramdhan.lanadi.core.ui.sheet.SheetManager
 import io.alramdhan.lanadi.domain.models.CartProduk
 import io.alramdhan.lanadi.domain.usecase.AddToCartUseCase
 import io.alramdhan.lanadi.domain.usecase.DeleteAllCartsUseCase
@@ -13,6 +15,8 @@ import io.alramdhan.lanadi.ui.home.cart.CartEffect
 import io.alramdhan.lanadi.ui.home.cart.CartIntent
 import io.alramdhan.lanadi.ui.home.cart.CartState
 import io.alramdhan.lanadi.ui.animations.FlyingItem
+import io.alramdhan.lanadi.ui.home.checkout.CheckoutScreen
+import io.alramdhan.lanadi.viewmodels.home.checkout.CheckoutViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +31,8 @@ class CartViewModel(
     private val updateCartQty: UpdateCartQtyUseCase,
     private val deleteCart: DeleteCartUseCase,
     private val deleteAllCarts: DeleteAllCartsUseCase,
-    private val dialogManager: DialogManager
+    private val dialogManager: DialogManager,
+    private val sheetManager: SheetManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CartState())
     val uiState = _uiState.asStateFlow()
@@ -61,6 +66,7 @@ class CartViewModel(
             is CartIntent.DeleteAllItems -> deleteAllItems()
             is CartIntent.OnChangeNamaPelanggan -> _uiState.update { it.copy(namaPelanggan = intent.nama) }
             is CartIntent.CheckoutClicked -> navigateToCheckout()
+            is CartIntent.OpenModalCheckout -> openBottomSheetCO(intent.sharedVm, intent.navController)
             is CartIntent.AnimationFinished -> {
                 _uiState.update { it.copy(flyingItems = it.flyingItems.filter { fi -> fi.id != intent.flyingItemsId }) }
             }
@@ -131,6 +137,12 @@ class CartViewModel(
                 _uiState.update { it.copy(checkoutProcess = false) }
                 _effect.send(CartEffect.NavigateToCheckout)
             }
+        }
+    }
+
+    private fun openBottomSheetCO(vm: CheckoutViewModel, nav: NavController) {
+        sheetManager.showSheet({}) {
+            CheckoutScreen(vm, nav)
         }
     }
 

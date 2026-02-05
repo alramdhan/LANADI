@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -62,7 +61,6 @@ import io.alramdhan.lanadi.ui.components.LanadiTextField
 import io.alramdhan.lanadi.viewmodels.auth.LoginViewModel
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.LoginScreen(
     windowWidthSizeClass: WindowWidthSizeClass?,
@@ -116,7 +114,6 @@ fun SharedTransitionScope.LoginScreen(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.MobileLayout(
     showContent: Boolean = false,
@@ -161,7 +158,6 @@ fun SharedTransitionScope.MobileLayout(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.TabletLayout(
     showContent: Boolean = false,
@@ -266,7 +262,6 @@ fun LogoSection(isInverse: Boolean = false) {
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.LoginForm(
     isTablet: Boolean = false,

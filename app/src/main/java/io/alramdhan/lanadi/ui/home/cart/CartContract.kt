@@ -3,8 +3,10 @@ package io.alramdhan.lanadi.ui.home.cart
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.IntSize
+import androidx.navigation.NavController
 import io.alramdhan.lanadi.domain.models.CartProduk
 import io.alramdhan.lanadi.ui.animations.FlyingItem
+import io.alramdhan.lanadi.viewmodels.home.checkout.CheckoutViewModel
 
 sealed class CartEffect {
     data class ShowToast(val message: String): CartEffect()
@@ -23,6 +25,7 @@ sealed class CartIntent {
     data class OnChangeNamaPelanggan(val nama: String): CartIntent()
 
     data object CheckoutClicked: CartIntent()
+    data class OpenModalCheckout(val sharedVm: CheckoutViewModel, val navController: NavController): CartIntent()
 
     data class AnimationFinished(val flyingItemsId: Long): CartIntent()
 }

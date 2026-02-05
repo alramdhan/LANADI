@@ -1,7 +1,6 @@
 package io.alramdhan.lanadi.ui.home
 
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -39,7 +38,6 @@ import io.alramdhan.lanadi.viewmodels.home.cart.CartViewModel
 import io.alramdhan.lanadi.viewmodels.home.setting.SettingViewModel
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.MenuTab(
     widthSizeClass: WindowWidthSizeClass? = null,
