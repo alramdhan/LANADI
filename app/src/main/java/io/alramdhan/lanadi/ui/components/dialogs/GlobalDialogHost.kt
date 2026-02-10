@@ -32,10 +32,12 @@ fun GlobalDialogHost(
                 Text(state.message)
             },
             confirmButton = {
-                TextButton(onClick = state.onConfirm) {
-                    Text(state.confirmText,
-                        color = Danger
-                    )
+                if(state.showConfirmButton) {
+                    TextButton(onClick = state.onConfirm) {
+                        Text(state.confirmText,
+                            color = Danger
+                        )
+                    }
                 }
             },
             dismissButton = {

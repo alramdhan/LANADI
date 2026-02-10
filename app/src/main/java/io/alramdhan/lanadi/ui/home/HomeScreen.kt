@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.NoteAlt
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Icon
@@ -179,7 +180,7 @@ private fun SearchTextField(state: HomeState, viewModel: HomeViewModel) {
         modifier = Modifier.padding(horizontal = 16.dp),
         value = state.searchText ?: "",
         onValueChange = { viewModel.onIntent(HomeIntent.SearchTextChanged(it)) },
-        label = "Search",
+        label = "Cari",
         enabled = state.produks is UiState.Success,
         trailingIcon = {
             if(state.searchText != null) {
@@ -192,6 +193,9 @@ private fun SearchTextField(state: HomeState, viewModel: HomeViewModel) {
                 }
             }
         },
+        leadingIcon = {
+            Icon(Icons.Default.Search, contentDescription = "search icon")
+        }
     )
 }
 

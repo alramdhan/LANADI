@@ -1,5 +1,6 @@
 package io.alramdhan.lanadi.viewmodels.home.cart
 
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -66,7 +67,7 @@ class CartViewModel(
             is CartIntent.DeleteAllItems -> deleteAllItems()
             is CartIntent.OnChangeNamaPelanggan -> _uiState.update { it.copy(namaPelanggan = intent.nama) }
             is CartIntent.CheckoutClicked -> navigateToCheckout()
-            is CartIntent.OpenModalCheckout -> openBottomSheetCO(intent.sharedVm, intent.navController)
+            is CartIntent.OpenModalCheckout -> openBottomSheetCO(intent.screen)
             is CartIntent.AnimationFinished -> {
                 _uiState.update { it.copy(flyingItems = it.flyingItems.filter { fi -> fi.id != intent.flyingItemsId }) }
             }
@@ -76,7 +77,8 @@ class CartViewModel(
     fun onDeleteItemClicked() {
         dialogManager.show(
             "Perhatian",
-            message = "Apakah yakin ingin menghapus semua data?",
+            message = "Apakah yakin ingin menghapus semua pesanan?",
+            showConfirmButton = true,
             onConfirm = { onIntent(CartIntent.DeleteAllItems) }
         )
     }
@@ -128,22 +130,27 @@ class CartViewModel(
     }
 
     private fun navigateToCheckout() {
-        if(_uiState.value.namaPelanggan.isEmpty()) {
+        if(_uiState.value.products.isEmpty()) {
+            dialogManager.show(
+                title = "Keranjang Kosong",
+                message = "Belum ada produk yang ditambahkan ke dalam pesanan ini.",
+            )
+        } else if(_uiState.value.namaPelanggan.isEmpty()) {
             _uiState.update { it.copy(errorNamaPelanggan = "Nama Pelanggan harus diisi") }
         } else {
             _uiState.update { it.copy(errorNamaPelanggan = null, checkoutProcess = true) }
             viewModelScope.launch {
-                delay(500)
+                delay(200)
                 _uiState.update { it.copy(checkoutProcess = false) }
                 _effect.send(CartEffect.NavigateToCheckout)
             }
         }
     }
 
-    private fun openBottomSheetCO(vm: CheckoutViewModel, nav: NavController) {
-        sheetManager.showSheet({}) {
-            CheckoutScreen(vm, nav)
-        }
+    private fun openBottomSheetCO(checkoutScreen: @Composable () -> Unit) {
+        sheetManager.showSheet({},
+            content = checkoutScreen
+        )
     }
 
     private fun checkIfProdukHasAdded(item: CartProduk): Boolean {

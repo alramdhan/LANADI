@@ -1,5 +1,6 @@
 package io.alramdhan.lanadi.ui.home.cart
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.IntSize
@@ -25,7 +26,7 @@ sealed class CartIntent {
     data class OnChangeNamaPelanggan(val nama: String): CartIntent()
 
     data object CheckoutClicked: CartIntent()
-    data class OpenModalCheckout(val sharedVm: CheckoutViewModel, val navController: NavController): CartIntent()
+    data class OpenModalCheckout(val screen: @Composable () -> Unit): CartIntent()
 
     data class AnimationFinished(val flyingItemsId: Long): CartIntent()
 }

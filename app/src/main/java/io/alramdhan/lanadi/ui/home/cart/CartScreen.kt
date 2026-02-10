@@ -7,7 +7,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -61,6 +60,7 @@ import io.alramdhan.lanadi.domain.models.CartProduk
 import io.alramdhan.lanadi.ui.components.NumberStepper
 import io.alramdhan.lanadi.ui.components.SkeletonPlaceholder
 import io.alramdhan.lanadi.ui.components.SwipeToRevealCard
+import io.alramdhan.lanadi.ui.home.checkout.CheckoutScreen
 import io.alramdhan.lanadi.ui.theme.Danger
 import io.alramdhan.lanadi.viewmodels.home.cart.CartViewModel
 import io.alramdhan.lanadi.viewmodels.home.checkout.CheckoutViewModel
@@ -84,7 +84,14 @@ fun CartScreen(
                 is CartEffect.ShowToast -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 is CartEffect.NavigateToCheckout -> {
                     sharedVm.updateCartData(state)
-                    viewModel.onIntent(CartIntent.OpenModalCheckout(sharedVm, navController))
+                    viewModel.onIntent(
+                        CartIntent.OpenModalCheckout({
+                            CheckoutScreen(
+                                sharedVm,
+                                navController
+                            )
+                        })
+                    )
 //                    navController.navigate(Screen.Checkout.route)
                 }
             }
@@ -147,7 +154,7 @@ fun CartScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Daftar item (${state.products.size})")
+                    Text("Daftar Pesanan (${state.products.size})")
                     TextButton({ viewModel.onDeleteItemClicked() },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
@@ -156,7 +163,7 @@ fun CartScreen(
                         ),
                         enabled = state.products.isNotEmpty()
                     ) {
-                        Text("Hapus Semua")
+                        Text("Kosongkan")
                     }
                 }
                 ContainerListCart(
@@ -301,34 +308,28 @@ private fun ItemCartTile(
 @Composable
 private fun ContainerButtonAndTotal(
     process: Boolean = false,
-    total: Double,
+    subtotal: Double,
     totalItem: Int,
     onCheckoutClicked: () -> Unit
 ) {
-    Row(
+    val tax = subtotal * 0.08
+    val total = subtotal + tax
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(IntrinsicSize.Min)
             .background(MaterialTheme.colorScheme.surface)
-            .padding(20.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .padding(start = 20.dp, top = 20.dp, end = 20.dp)
     ) {
-        Column {
-            Text(
-                "Total",
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                total.toRupiah(),
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-        }
+        Text("Ringkasan Pembayaran")
+        Spacer(Modifier.height(12.dp))
+        RowInfoPembayaran("Subtotal", subtotal.toRupiah())
+        RowInfoPembayaran("Pajak", tax.toRupiah())
+        RowInfoPembayaran("Diskon", 0.toRupiah())
+        HorizontalDivider(Modifier.padding(top = 16.dp, bottom = 8.dp))
+        RowInfoPembayaran("Total", total.toRupiah())
         ElevatedButton(
             modifier = Modifier
-                .width(150.dp)
+                .fillMaxWidth()
                 .padding(vertical = 8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -338,14 +339,37 @@ private fun ContainerButtonAndTotal(
             enabled = totalItem > 0,
             onClick = onCheckoutClicked
         ) {
-            if(process) {
+            if (process) {
                 CircularProgressIndicator(Modifier.size(24.dp), trackColor = Color.White)
             } else {
                 Text(
-                    "Checkout ($totalItem)",
+                    "Bayar Sekarang",
                     fontSize = 16.sp
                 )
             }
         }
+    }
+}
+
+@Composable
+fun RowInfoPembayaran(
+    label: String,
+    informasi: String
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            label,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 16.sp
+        )
+        Text(
+            informasi,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
     }
 }

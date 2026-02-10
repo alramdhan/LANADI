@@ -17,9 +17,10 @@ class DialogManager {
     fun show(
         title: String,
         message: String,
+        showConfirmButton: Boolean = false,
         confirmText: String = "Ya",
         dismissText: String = "Batal",
-        onConfirm: () -> Unit,
+        onConfirm: () -> Unit = {},
         onDismiss: () -> Unit = { dismiss() }
     ) {
         _dialogState.update {
@@ -27,6 +28,7 @@ class DialogManager {
                 isVisible = true,
                 title = title,
                 message = message,
+                showConfirmButton = showConfirmButton,
                 confirmText = confirmText,
                 dismissText = dismissText,
                 onConfirm = {

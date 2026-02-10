@@ -47,6 +47,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
@@ -87,7 +88,7 @@ fun ProductItem(modifier: Modifier = Modifier, isLoading: Boolean = false, produ
                         currentSize = it.size
                     }
                     .fillMaxWidth()
-                    .height(120.dp)
+                    .height(150.dp)
                     .background(MaterialTheme.colorScheme.secondaryContainer),
                 contentAlignment = Alignment.Center
             ) {
@@ -95,7 +96,7 @@ fun ProductItem(modifier: Modifier = Modifier, isLoading: Boolean = false, produ
                     true -> SkeletonPlaceholder(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(120.dp),
+                            .height(150.dp),
                         roundedShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
                     )
                     else -> {
@@ -107,6 +108,19 @@ fun ProductItem(modifier: Modifier = Modifier, isLoading: Boolean = false, produ
                             contentDescription = "image kategori ${produk.id}",
                             contentScale = ContentScale.Crop,
                         )
+                        if(produk.stok == 0) {
+                            Box(Modifier.fillMaxWidth()
+                                .height(150.dp)
+                                .background(Color.Gray.copy(alpha = .6f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    "Stok habis",
+                                    fontSize = 16.sp,
+                                    style = TextStyle(color = Color(0xFFEFEFEF))
+                                )
+                            }
+                        }
                     }
                 }
             }
