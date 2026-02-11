@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import io.alramdhan.lanadi.domain.models.MetodePembayaran
+import io.alramdhan.lanadi.ui.components.PaymentOptionCard
 import io.alramdhan.lanadi.viewmodels.home.checkout.CheckoutViewModel
 import kotlinx.coroutines.flow.collect
 
@@ -49,7 +50,7 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, navController: NavController) {
 
     Column(
         modifier = Modifier.fillMaxWidth()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp),
     ) {
         Text("Pilih Metode Pembayaran")
         Spacer(Modifier.height(8.dp))
@@ -61,7 +62,7 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, navController: NavController) {
                 PaymentOptionCard(
                     metode,
                     isSelected = state.selectedMethod == metode,
-                    onClick = {}
+                    onClick = { viewModel.onIntent(CheckoutIntent.SelectMethod(metode)) }
                 )
             }
         }
@@ -71,33 +72,10 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, navController: NavController) {
             enabled = state.selectedMethod != null && !state.isLoading
         ) {
             if (state.isLoading) CircularProgressIndicator(color = Color.White)
-            else Text("Proses Pembayaran")
+            else Text(
+                "Proses Pembayaran",
+                style = MaterialTheme.typography.titleSmall.copy(color = Color.White)
+            )
         }
-    }
-}
-
-@Composable
-private fun PaymentOptionCard(
-    metode: MetodePembayaran,
-    modifier: Modifier = Modifier,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = modifier.fillMaxWidth()
-            .background(
-                if(isSelected)
-                    MaterialTheme.colorScheme.primaryContainer
-                else
-                    MaterialTheme.colorScheme.surface
-            ),
-        border = if(isSelected) BorderStroke(2.dp, color = MaterialTheme.colorScheme.primary) else null
-    ) {
-        ListItem(
-            headlineContent = { Text(metode.label) },
-            trailingContent = {
-                Icon(metode.icon, contentDescription = "icon ${metode.label}")
-            }
-        )
     }
 }

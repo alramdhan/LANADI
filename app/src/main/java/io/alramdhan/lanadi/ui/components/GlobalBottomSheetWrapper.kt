@@ -32,7 +32,7 @@ fun GlobalBottomSheetWrapper(sheetManager: SheetManager = koinInject()) {
             dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
             currentSheet.content()
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }
