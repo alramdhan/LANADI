@@ -3,7 +3,6 @@ package io.alramdhan.lanadi.viewmodels.home.cart
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import io.alramdhan.lanadi.core.ui.dialog.DialogManager
 import io.alramdhan.lanadi.core.ui.sheet.SheetManager
 import io.alramdhan.lanadi.domain.models.CartProduk
@@ -16,8 +15,6 @@ import io.alramdhan.lanadi.ui.home.cart.CartEffect
 import io.alramdhan.lanadi.ui.home.cart.CartIntent
 import io.alramdhan.lanadi.ui.home.cart.CartState
 import io.alramdhan.lanadi.ui.animations.FlyingItem
-import io.alramdhan.lanadi.ui.home.checkout.CheckoutScreen
-import io.alramdhan.lanadi.viewmodels.home.checkout.CheckoutViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

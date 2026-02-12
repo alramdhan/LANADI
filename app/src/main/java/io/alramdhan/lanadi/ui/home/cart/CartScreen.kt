@@ -85,12 +85,12 @@ fun CartScreen(
                 is CartEffect.NavigateToCheckout -> {
                     sharedVm.updateCartData(state)
                     viewModel.onIntent(
-                        CartIntent.OpenModalCheckout({
+                        CartIntent.OpenModalCheckout {
                             CheckoutScreen(
                                 sharedVm,
                                 navController
                             )
-                        })
+                        }
                     )
                     //navController.navigate(Screen.Checkout.route)
                 }

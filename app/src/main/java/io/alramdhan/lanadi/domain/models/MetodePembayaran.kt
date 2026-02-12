@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class MetodePembayaran(val label: String, val icon: ImageVector) {
-    QRIS("QRIS", Icons.Default.QrCode2),
     CASH("TUNAI / CASH", Icons.Default.Payments),
+    QRIS("QRIS", Icons.Default.QrCode2),
     TRANSFER("TRANSFER", Icons.Default.CreditCard)
 }
