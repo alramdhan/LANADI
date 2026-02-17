@@ -26,7 +26,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -57,6 +56,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import io.alramdhan.lanadi.core.utils.toRupiah
 import io.alramdhan.lanadi.domain.models.CartProduk
+import io.alramdhan.lanadi.ui.components.LanadiButton
 import io.alramdhan.lanadi.ui.components.NumberStepper
 import io.alramdhan.lanadi.ui.components.SkeletonPlaceholder
 import io.alramdhan.lanadi.ui.components.SwipeToRevealCard
@@ -92,7 +92,7 @@ fun CartScreen(
                             )
                         })
                     )
-//                    navController.navigate(Screen.Checkout.route)
+                    //navController.navigate(Screen.Checkout.route)
                 }
             }
         }
@@ -116,6 +116,11 @@ fun CartScreen(
                     .padding(paddingValues),
                 verticalArrangement = Arrangement.Center
             ) {
+                Text(
+                    "#ORD-0001",
+                    color = Color.Gray,
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                )
                 Box(
                     Modifier
                         .fillMaxWidth()
@@ -150,7 +155,7 @@ fun CartScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
+                        .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -187,7 +192,7 @@ private fun ContainerListCart(modifier: Modifier = Modifier, viewModel: CartView
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         contentPadding = PaddingValues(bottom = 20.dp),
     ) {
@@ -318,7 +323,7 @@ private fun ContainerButtonAndTotal(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
-            .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+            .padding(start = 20.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)
     ) {
         Text("Ringkasan Pembayaran")
         Spacer(Modifier.height(12.dp))
@@ -327,7 +332,7 @@ private fun ContainerButtonAndTotal(
         RowInfoPembayaran("Diskon", 0.toRupiah())
         HorizontalDivider(Modifier.padding(top = 16.dp, bottom = 8.dp))
         RowInfoPembayaran("Total", total.toRupiah())
-        ElevatedButton(
+        LanadiButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
